@@ -8,6 +8,13 @@ import {NavController, ActionSheetController, AlertController} from 'ionic-angul
 export class HomePage implements OnInit {
   devices: string[];
 
+  lines: string[];
+
+  newLine = {
+    line: 0,
+    text: ''
+  }
+
   @ViewChild('canvas') canvasEl: ElementRef;
   private _CANVAS: any;
   private _CONTEXT: any;
@@ -18,18 +25,23 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.getDevices();
     this.ionViewDidLoad();
+    this.initLines();
+  }
+
+  initLines() {
+    this.lines = Array(5);
+    for (let i = 0; i < this.lines.length; i++) {
+      this.lines[i] = "";
+    }
   }
 
   doRefresh(refresher) {
     console.log('Begin async operation', refresher);
-  this.getDevices();
+    this.getDevices();
     setTimeout(() => {
       console.log('Async operation has ended');
       refresher.complete();
     }, 2000);
-  }
-
-  addLine() {
   }
 
   showConnectError() {
@@ -145,6 +157,25 @@ export class HomePage implements OnInit {
     this._CONTEXT.strokeStyle = '#ffffff';
     this._CONTEXT.stroke();
   }
+
+  addLine() {
+    if (this.newLine.line < this.lines.length) {
+      this.lines[this.newLine.line - 1] = this.newLine.text;
+    }
+    console.log(typeof this.newLine.line);
+    this.drawText();
+  }
+
+  drawText() {
+    this.clearCanvas();
+    this._CONTEXT.fillStyle = '#ffffff';
+    this._CONTEXT.font = '30px Arial';
+
+    for (let i = 0; i < this.lines.length; i++) {
+      this._CONTEXT.fillText(this.lines[i], 10, 50 + (35 * i));
+    }
+  }
+
 
 }
 

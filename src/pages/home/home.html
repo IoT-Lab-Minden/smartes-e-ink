@@ -32,11 +32,11 @@
     <ion-card-content>
       <form (ngSubmit)="addLine()">
         <ion-item>
-          <ion-input type="text" name="text" id="text-input"></ion-input><br>
+          <ion-input type="text" [(ngModel)]="newLine.text" name="text" id="text-input"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>Zeile</ion-label>
-          <ion-select>
+          <ion-select [(ngModel)]="newLine.line" name="line" required okText="Ok" cancelText="Abbrechen" placeholder="Zeile auswählen">
             <ion-option value="1">1</ion-option>
             <ion-option value="2">2</ion-option>
             <ion-option value="3">3</ion-option>
@@ -44,6 +44,7 @@
             <ion-option value="5">5</ion-option>
           </ion-select>
         </ion-item>
+        <button ion-button type="submit" block>Zeile schreiben</button>
       </form>
     </ion-card-content>
 
