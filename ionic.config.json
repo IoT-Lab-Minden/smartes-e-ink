@@ -1,0 +1,7 @@
+{
+  "name": "e-ink-connect",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
