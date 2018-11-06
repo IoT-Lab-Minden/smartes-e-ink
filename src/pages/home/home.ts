@@ -36,10 +36,8 @@ export class HomePage implements OnInit {
   }
 
   doRefresh(refresher) {
-    console.log('Begin async operation', refresher);
     this.getDevices();
     setTimeout(() => {
-      console.log('Async operation has ended');
       refresher.complete();
     }, 2000);
   }
@@ -104,7 +102,7 @@ export class HomePage implements OnInit {
           text: 'Abbrechen',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+
           }
         }
       ]
@@ -127,7 +125,6 @@ export class HomePage implements OnInit {
     this._CANVAS.height = 500;
 
     this.initialiseCanvas();
-    this.drawCircle();
   }
 
   initialiseCanvas() {
@@ -147,22 +144,10 @@ export class HomePage implements OnInit {
     this.setupCanvas();
   }
 
-  drawCircle() {
-    this.clearCanvas();
-    this._CONTEXT.beginPath();
-
-    // x, y, radius, startAngle, endAngle
-    this._CONTEXT.arc(this._CANVAS.width / 2, this._CANVAS.height / 2, 80, 0, 2 * Math.PI);
-    this._CONTEXT.lineWidth = 1;
-    this._CONTEXT.strokeStyle = '#ffffff';
-    this._CONTEXT.stroke();
-  }
-
   addLine() {
     if (this.newLine.line < this.lines.length) {
       this.lines[this.newLine.line - 1] = this.newLine.text;
     }
-    console.log(typeof this.newLine.line);
     this.drawText();
   }
 
