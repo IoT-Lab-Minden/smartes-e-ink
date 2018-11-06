@@ -7,6 +7,7 @@ import { NavController } from 'ionic-angular';
 })
 export class HomePage implements OnInit{
 
+
   constructor(public navCtrl: NavController) {
   }
 
@@ -21,6 +22,10 @@ export class HomePage implements OnInit{
       refresher.complete();
     }, 2000);
   }
+
+  addLine() {}
+
+  uploadData() {}
 
 
 
