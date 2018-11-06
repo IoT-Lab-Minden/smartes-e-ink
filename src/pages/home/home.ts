@@ -1,31 +1,31 @@
 import {Component, OnInit} from '@angular/core';
-import { NavController } from 'ionic-angular';
-import { AlertController } from 'ionic-angular';
-import { ActionSheetController } from 'ionic-angular';
+import {NavController, ActionSheetController, AlertController} from 'ionic-angular';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
-export class HomePage implements OnInit{
-
+export class HomePage implements OnInit {
+  devices: string[];
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController) {
   }
 
   ngOnInit(): void {
+    this.getDevices();
   }
 
   doRefresh(refresher) {
     console.log('Begin async operation', refresher);
-
+  this.getDevices();
     setTimeout(() => {
       console.log('Async operation has ended');
       refresher.complete();
     }, 2000);
   }
 
-  addLine() {}
+  addLine() {
+  }
 
   showConnectError() {
     let alert = this.alertCtrl.create({
@@ -66,9 +66,9 @@ export class HomePage implements OnInit{
     this.showDisconnectError();
   }
 
-  showConnectDeviceDialog() {
+  showConnectDeviceDialog(s: string) {
     let actionSheet = this.actionSheetCtrl.create({
-      title: 'Modify your album',
+      title: s,
       buttons: [
         {
           text: 'Verbinden',
@@ -96,5 +96,15 @@ export class HomePage implements OnInit{
     actionSheet.present();
   }
 
+  async getDevices() {
+    const x = Math.floor(Math.random() * 6) + 1;
+    this.devices = new Array(x);
+    for (let i = 0; i < x; i++) {
+      this.devices[i] = 'Display' + i;
+    }
+  }
 
 }
+
+
+
