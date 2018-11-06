@@ -20,13 +20,15 @@
   <ion-card id="devices">
     <ion-card-header text-center class="devices-header">Verfügbare Geräte</ion-card-header>
     <ion-card-content id="devices-content">
-      <ion-card class="device"></ion-card>
+      <ion-card class="device" (click)="showConnectDeviceDialog()"></ion-card>
     </ion-card-content>
     <div text-center>Stelle sicher, das Bluetooth aktiviert ist.</div>
   </ion-card>
 
   <ion-card id="editor">
+
     <ion-card-header class="devices-header" text-center="">Daten-Editor</ion-card-header>
+
     <ion-card-content>
       <form (ngSubmit)="addLine()">
         <ion-item>
@@ -44,10 +46,13 @@
         </ion-item>
       </form>
     </ion-card-content>
+
     <ion-card-content id="editor-content">
       <canvas #canvas></canvas>
     </ion-card-content>
+
   </ion-card>
+
   <button ion-button block (click)="uploadData()">Übertragen</button>
 
 </ion-content>
