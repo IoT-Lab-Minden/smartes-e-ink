@@ -1,14 +1,59 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>
-      Ionic Blank
+    <ion-title text-center>
+      E-Ink-Connect
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card id="devices">
+    <ion-card-header text-center class="devices-header">Verfügbare Geräte</ion-card-header>
+    <ion-card-content id="devices-content">
+      <ion-card class="device" (click)="showConnectDeviceDialog(s)" *ngFor="let s of devices">{{s}}</ion-card>
+    </ion-card-content>
+    <div text-center>Stelle sicher, dass Bluetooth aktiviert ist.</div>
+  </ion-card>
+
+  <ion-card id="editor">
+
+    <ion-card-header class="devices-header" text-center="">Daten-Editor</ion-card-header>
+
+    <ion-card-content>
+      <form (ngSubmit)="addLine()">
+        <ion-item>
+          <ion-input type="text" [(ngModel)]="newLine.text" name="text" id="text-input"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Zeile</ion-label>
+          <ion-select [(ngModel)]="newLine.line" name="line" required okText="Ok" cancelText="Abbrechen" placeholder="Zeile auswählen">
+            <ion-option value="1">1</ion-option>
+            <ion-option value="2">2</ion-option>
+            <ion-option value="3">3</ion-option>
+            <ion-option value="4">4</ion-option>
+            <ion-option value="5">5</ion-option>
+          </ion-select>
+        </ion-item>
+        <button ion-button type="submit" block>Zeile schreiben</button>
+      </form>
+    </ion-card-content>
+
+    <ion-card-content id="editor-content">
+      <canvas #canvas></canvas>
+    </ion-card-content>
+
+  </ion-card>
+
+  <button ion-button block (click)="uploadData()">Übertragen</button>
+
 </ion-content>
