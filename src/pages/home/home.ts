@@ -4,7 +4,8 @@ import {BLE} from '@ionic-native/ble';
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html'
+  templateUrl: 'home.html',
+  providers: [ BLE ]
 })
 
 export class HomePage implements OnInit {
@@ -21,7 +22,7 @@ export class HomePage implements OnInit {
   private _CANVAS: any;
   private _CONTEXT: any;
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController, private  ble: BLE) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController, public  ble: BLE) {
   }
 
   ngOnInit(): void {
@@ -162,6 +163,8 @@ export class HomePage implements OnInit {
       this._CONTEXT.fillText(this.lines[i], 10, 50 + (35 * i));
     }
   }
+
+  
 
 
 }
