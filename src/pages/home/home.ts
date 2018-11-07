@@ -1,10 +1,12 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavController, ActionSheetController, AlertController} from 'ionic-angular';
+import {BLE} from '@ionic-native/ble';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
+
 export class HomePage implements OnInit {
   devices: string[];
 
@@ -19,7 +21,7 @@ export class HomePage implements OnInit {
   private _CANVAS: any;
   private _CONTEXT: any;
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController, private  ble: BLE) {
   }
 
   ngOnInit(): void {
