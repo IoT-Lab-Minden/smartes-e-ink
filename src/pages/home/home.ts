@@ -9,7 +9,7 @@ import {BLE} from '@ionic-native/ble';
 })
 
 export class HomePage implements OnInit {
-  devices: string[];
+  devices: Array<any>;
 
   lines: string[];
 
@@ -26,9 +26,20 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDevices();
+    this.devices = new Array<any>(0);
+    //this.getDevices();
+    //this.onDeviceDiscovered("test");
+    this.ble.scan([],2).subscribe(
+      device => this.onDeviceDiscovered(device),
+        error => this.showBluetoothError()
+    );
     this.ionViewDidLoad();
     this.initLines();
+  }
+
+  onDeviceDiscovered(device){
+    this.devices.push(device);
+    console.log(device);
   }
 
   initLines() {
@@ -39,10 +50,23 @@ export class HomePage implements OnInit {
   }
 
   doRefresh(refresher) {
-    this.getDevices();
+    this.ble.scan([],2).subscribe(
+      device => this.onDeviceDiscovered(device),
+      error => this.showBluetoothError()
+    );
     setTimeout(() => {
       refresher.complete();
+      //this.ble.stopScan();
     }, 2000);
+  }
+
+  showBluetoothError() {
+    let alert = this.alertCtrl.create({
+      title: 'Fehler beim Scannen',
+      subTitle: 'Beim Scannen ist ein Fehler aufgetreten!',
+      buttons: ['Ok.']
+    });
+    alert.present();
   }
 
   showConnectError() {
@@ -164,7 +188,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  
+
 
 
 }
