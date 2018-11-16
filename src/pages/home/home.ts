@@ -37,7 +37,7 @@ export class HomePage implements OnInit {
 
   onDeviceDiscovered(device) {
     //console.log(device);
-    if (device.includes(name)) {
+    if (device.name!=null) {
       this.devices.push(device);
     }
   }
@@ -103,13 +103,13 @@ export class HomePage implements OnInit {
   connect(device) {
     this.ble.connect(device.id).subscribe(
         peripheral => this.onConnected(peripheral),
-      peripheral => this.showConnectError()
+      error => this.showConnectError()
     );
     this.showConnectError();
   }
 
   onConnected(peripheral){
-
+    console.log("Verbunden");
   }
 
   disconnect() {
