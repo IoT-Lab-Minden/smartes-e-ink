@@ -20,7 +20,14 @@
   <ion-card id="devices">
     <ion-card-header text-center class="devices-header">Verfügbare Geräte</ion-card-header>
     <ion-card-content id="devices-content">
-      <ion-card class="device" (click)="showConnectDeviceDialog(device)" *ngFor="let device of devices">{{device.name}}</ion-card>
+      <ion-card class="device" (click)="showConnectDeviceDialog(device)" *ngFor="let device of devices">
+        <ion-row>
+          {{device.name}}
+        </ion-row>
+        <ion-row>
+          {{device.id}}
+        </ion-row>
+      </ion-card>
     </ion-card-content>
     <div text-center>Stelle sicher, dass Bluetooth aktiviert ist.</div>
   </ion-card>
