@@ -5,7 +5,7 @@ import {BLE} from '@ionic-native/ble';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
-  providers: [ BLE ]
+  providers: [BLE]
 })
 
 export class HomePage implements OnInit {
@@ -27,19 +27,19 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.devices = new Array<any>(0);
-    //this.getDevices();
-    //this.onDeviceDiscovered("test");
-    this.ble.scan([],2).subscribe(
+    this.ble.scan([], 2).subscribe(
       device => this.onDeviceDiscovered(device),
-        error => this.showBluetoothError()
+      error => this.showBluetoothError()
     );
     this.ionViewDidLoad();
     this.initLines();
   }
 
-  onDeviceDiscovered(device){
-    this.devices.push(device);
+  onDeviceDiscovered(device) {
     console.log(device);
+    if (device.name) {
+      this.devices.push(device);
+    }
   }
 
   initLines() {
@@ -50,7 +50,8 @@ export class HomePage implements OnInit {
   }
 
   doRefresh(refresher) {
-    this.ble.scan([],2).subscribe(
+    this.devices = new Array<any>(0);
+    this.ble.scan([], 2).subscribe(
       device => this.onDeviceDiscovered(device),
       error => this.showBluetoothError()
     );
@@ -100,22 +101,30 @@ export class HomePage implements OnInit {
     this.showNoConnectionError();
   }
 
-  connect() {
+  connect(device) {
+    this.ble.connect(device.id).subscribe(
+        peripheral => this.onConnected(peripheral),
+      peripheral => this.showConnectError()
+    );
     this.showConnectError();
+  }
+
+  onConnected(peripheral){
+
   }
 
   disconnect() {
     this.showDisconnectError();
   }
 
-  showConnectDeviceDialog(s: string) {
+  showConnectDeviceDialog(device) {
     let actionSheet = this.actionSheetCtrl.create({
-      title: s,
+      title: device.name,
       buttons: [
         {
           text: 'Verbinden',
           handler: () => {
-            this.connect();
+            this.connect(device);
           }
         },
         {
@@ -187,10 +196,6 @@ export class HomePage implements OnInit {
       this._CONTEXT.fillText(this.lines[i], 10, 50 + (35 * i));
     }
   }
-
-
-
-
 }
 
 
