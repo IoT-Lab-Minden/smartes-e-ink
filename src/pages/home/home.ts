@@ -36,8 +36,8 @@ export class HomePage implements OnInit {
   }
 
   onDeviceDiscovered(device) {
-    console.log(device);
-    if (device.name) {
+    //console.log(device);
+    if (device.includes(name)) {
       this.devices.push(device);
     }
   }
@@ -57,7 +57,6 @@ export class HomePage implements OnInit {
     );
     setTimeout(() => {
       refresher.complete();
-      //this.ble.stopScan();
     }, 2000);
   }
 
@@ -181,7 +180,7 @@ export class HomePage implements OnInit {
   }
 
   addLine() {
-    if (this.newLine.line < this.lines.length) {
+    if (this.newLine.line <= this.lines.length) {
       this.lines[this.newLine.line - 1] = this.newLine.text;
     }
     this.drawText();
