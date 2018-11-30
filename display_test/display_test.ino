@@ -56,7 +56,7 @@ void sendImage() {
   DeviceStatus = !DeviceStatus;
 
   for (unsigned int pass = 0; pass < REQUIRED_IMAGE_PASSES; pass++) {
-    for (unsigned long imageByteIdx = 0, x = 0, y = 0; imageByteIdx < 120000; imageByteIdx++) {
+    for (unsigned int imageByteIdx = 0, x = 0, y = 0; imageByteIdx < 120000; imageByteIdx++) {
       if(imageByteIdx < sizeof(gImage_test_image)){
         data = gImage_test_image[imageByteIdx];
       } else {
