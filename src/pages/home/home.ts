@@ -105,7 +105,6 @@ export class HomePage implements OnInit {
         peripheral => this.onConnected(peripheral),
       error => this.showConnectError()
     );
-    this.showConnectError();
   }
 
   onConnected(peripheral){
