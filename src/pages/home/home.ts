@@ -1,5 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavController, ActionSheetController, AlertController} from 'ionic-angular';
+import { StatusBar } from '@ionic-native/status-bar';
 import {BLE} from '@ionic-native/ble';
 
 @Component({
@@ -22,17 +23,15 @@ export class HomePage implements OnInit {
   private _CANVAS: any;
   private _CONTEXT: any;
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController, public  ble: BLE) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
+              public  ble: BLE, private statusBar: StatusBar)
+ {
   }
 
   ngOnInit(): void {
-    this.devices = new Array<any>(0);
-    this.ble.scan([], 2).subscribe(
-      device => this.onDeviceDiscovered(device),
-      error => this.showBluetoothError()
-    );
+
     this.ionViewDidLoad();
-    this.initLines();
+
   }
 
   onDeviceDiscovered(device) {
@@ -145,15 +144,20 @@ export class HomePage implements OnInit {
     actionSheet.present();
   }
 
-  async getDevices() {
-    const x = Math.floor(Math.random() * 6) + 1;
-    this.devices = new Array(x);
-    for (let i = 0; i < x; i++) {
-      this.devices[i] = 'Display' + i;
-    }
-  }
-
   ionViewDidLoad() {
+
+    this.statusBar.overlaysWebView(true);
+    this.statusBar.styleBlackTranslucent();
+    this.statusBar.backgroundColorByHexString('#ffffff');
+
+    this.devices = new Array<any>(0);
+    this.ble.scan([], 2).subscribe(
+      device => this.onDeviceDiscovered(device),
+      error => this.showBluetoothError()
+    );
+
+    this.initLines();
+
     this._CANVAS = this.canvasEl.nativeElement;
     this._CANVAS.width = 500;
     this._CANVAS.height = 500;
