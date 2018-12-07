@@ -1,5 +1,6 @@
 #include <SPI.h>
-#include "test_image.c"
+#include "image_1.c"
+#include "image_2.c"
 
 #define STATUS_PIN 5
 #define CS_PIN 2
@@ -43,7 +44,7 @@ void setImageHeight(unsigned int height) {
   setImageDimension(false, height);
 }
 
-void sendImage() {
+void sendImage(const unsigned char *image) {
   bool DeviceStatus;
   unsigned char data;
     
@@ -57,8 +58,8 @@ void sendImage() {
 
   for (unsigned int pass = 0; pass < REQUIRED_IMAGE_PASSES; pass++) {
     for (unsigned int imageByteIdx = 0, x = 0, y = 0; imageByteIdx < 120000; imageByteIdx++) {
-      if(imageByteIdx < sizeof(gImage_test_image)){
-        data = gImage_test_image[imageByteIdx];
+      if(imageByteIdx < sizeof(gImage_image_2)){
+        data = *(image+imageByteIdx);
       } else {
         data = 0x00;
       }
@@ -66,11 +67,6 @@ void sendImage() {
 
       while (digitalRead(STATUS_PIN) == DeviceStatus) { }
       DeviceStatus = !DeviceStatus;
-
-      if ((x += 4) >= 800) {
-        x = 0;
-        y++;
-      }
     }    
   }
   
@@ -97,7 +93,7 @@ void setup() {
   setImageWidth(IMAGE_WIDTH);
   setImageHeight(IMAGE_HEIGHT);
   clearScreen();
-  sendImage();
+  sendImage(gImage_image_2);
 }
 
 void loop() {
