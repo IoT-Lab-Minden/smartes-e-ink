@@ -1,14 +1,21 @@
 #include <SPI.h>
+#include <Wire.h>
+#include <SparkFun_APDS9960.h>
 #include "image_1.c"
 #include "image_2.c"
 
 #define STATUS_PIN 5
 #define CS_PIN 2
+#define GESTURE_INT 15
 
 #define IMAGE_WIDTH 800
 #define IMAGE_HEIGHT 600
 #define SPI_MODE SPI_MODE1
 #define REQUIRED_IMAGE_PASSES 11
+
+SparkFun_APDS9960 apds = SparkFun_APDS9960();
+int isr_flag = 0;
+int picture=1;
 
 void clearScreen(void) {
   bool DeviceStatus;
@@ -75,9 +82,72 @@ void sendImage(const unsigned char *image) {
   Serial.println("End sendImage.");
 }
 
+void handleGesture() {
+    if (apds.isGestureAvailable())
+	{
+		switch (apds.readGesture()) 
+		{
+		case DIR_UP:
+			Serial.println("UP");
+			break;
+		case DIR_DOWN:
+			Serial.println("DOWN");
+			break;
+		case DIR_LEFT:
+			Serial.println("LEFT");
+			if(picture==2)
+			{
+				picture=1;
+			clearScreen();
+			sendImage(gImage_image_1);
+			}
+			break;
+		case DIR_RIGHT:
+			Serial.println("RIGHT");
+			if(picture==1)
+			{
+				picture=2;
+			clearScreen();
+			sendImage(gImage_image_2);
+			}
+			break;
+		case DIR_NEAR:
+			Serial.println("NEAR");
+			break;
+		case DIR_FAR:
+			Serial.println("FAR");
+			break;
+		default:
+			Serial.println("NONE");
+		}
+	}
+}
+
+void interruptRoutine()
+{
+  isr_flag = 1;
+}
+
 void setup() {
   Serial.begin(9600);
   while (!Serial) {};
+
+  if (apds.init())
+  {
+    Serial.println("APDS-9960 initialization complete");
+  }
+  else 
+  {
+    Serial.println("Something went wrong during APDS-9960 init!");
+  }
+  if (apds.enableGestureSensor(true)) 
+  {
+    Serial.println("Gesture sensor is now running");
+  }
+  else 
+  {
+    Serial.println("Something went wrong during gesture sensor init!");
+  }
   
   pinMode(STATUS_PIN, INPUT); 
   digitalWrite(STATUS_PIN, HIGH);
@@ -93,8 +163,15 @@ void setup() {
   setImageWidth(IMAGE_WIDTH);
   setImageHeight(IMAGE_HEIGHT);
   clearScreen();
-  sendImage(gImage_image_2);
+  sendImage(gImage_image_1);
+  attachInterrupt(GESTURE_INT, interruptRoutine, FALLING);
 }
 
 void loop() {
+  if( isr_flag == 1 ) {
+    detachInterrupt(GESTURE_INT);
+    handleGesture();
+    isr_flag = 0;
+    attachInterrupt(GESTURE_INT, interruptRoutine, FALLING);
+  }
 }
