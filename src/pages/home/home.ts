@@ -47,6 +47,7 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
 
     this.ionViewDidLoad();
+    console.log(this.base64.encodeFile("src/katze_2.jpg"));
 
   }
 
@@ -112,7 +113,17 @@ export class HomePage implements OnInit {
   }
 
   uploadData() {
-    this.showNoConnectionError();
+    if(this.connected){
+      var image = new Image();
+      image.src = this._CANVAS.toDataURL;
+      if(image != null){
+
+        //Image in BAse 64 Umwandeln
+        this.sendData("test");
+      }
+    } else {
+      this.showNoConnectionError();
+    }
   }
 
   connect(device) {
