@@ -209,6 +209,18 @@ export class HomePage implements OnInit {
       this._CONTEXT.fillText(this.lines[i], 10, 50 + (35 * i));
     }
   }
+
+  sendData(data: string){
+    var index = 0;
+    while(data.length > index){
+      var string = new  Array<any>(20);
+      for(let i = 0; i < 20; i++, index++){
+        string[i] = data[index];
+      }
+      //Daten senden
+    }
+  }
+
 }
 
 
