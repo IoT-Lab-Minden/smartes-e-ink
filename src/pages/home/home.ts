@@ -20,7 +20,19 @@ export class HomePage implements OnInit {
     text: ''
   }
 
-  device = {};
+  device = {
+    'name': '',
+    'id': '',
+    'advertising': [2,1,6,3,3,15,24,8,9,66,97,116,116,101,114,121],
+    'rssi': -55,
+    'services': [],
+    'characteristics': []
+  };
+
+  connected = false;
+
+  serviceUUID = "";
+  characteristicUUID = "";
 
   @ViewChild('canvas') canvasEl: ElementRef;
   private _CANVAS: any;
@@ -104,7 +116,7 @@ export class HomePage implements OnInit {
   }
 
   connect(device) {
-    if(this.device != {}) {
+    if(this.connected) {
       this.ble.connect(device.id).subscribe(
         peripheral => this.onConnected(peripheral),
         error => this.showConnectError()
@@ -119,7 +131,7 @@ export class HomePage implements OnInit {
 
   disconnect(device) {
    this.ble.disconnect(device.id).then(res => {
-     this.device = {};
+     this.connected = false;
    }).catch(err => {
      this.showDisconnectError()
    })
@@ -222,10 +234,12 @@ export class HomePage implements OnInit {
     let index = 0;
     while(index < data.length){
       let sendingData = new Uint8Array(20);
-      for(let i = 0; i < sendingData.length; i++, index++){
+      for(let i = 0; i < sendingData.length && index < data.length; i++, index++){
         sendingData[i] = data[index];
       }
-      //Daten senden
+      if(this.connected) {
+        this.ble.write(this.device.id, this.serviceUUID, this.characteristicUUID, sendingData.buffer);
+      }
     }
   }
 
