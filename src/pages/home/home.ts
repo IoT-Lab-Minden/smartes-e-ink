@@ -170,8 +170,8 @@ export class HomePage implements OnInit {
     this.initLines();
 
     this._CANVAS = this.canvasEl.nativeElement;
-    this._CANVAS.width = 500;
-    this._CANVAS.height = 500;
+    this._CANVAS.width = 800;
+    this._CANVAS.height = 600;
 
     this.initialiseCanvas();
   }
@@ -210,12 +210,20 @@ export class HomePage implements OnInit {
     }
   }
 
-  sendData(data: string){
-    var index = 0;
-    while(data.length > index){
-      var string = new  Array<any>(20);
-      for(let i = 0; i < 20; i++, index++){
-        string[i] = data[index];
+  stringToBytes(string) {
+    var array = new Uint8Array(string.length);
+    for (var i = 0, l = string.length; i < l; i++) {
+      array[i] = string.charCodeAt(i);
+    }
+    return array.buffer;
+  }
+
+  sendData(data: Uint8Array){
+    let index = 0;
+    while(index < data.length){
+      let sendingData = new Uint8Array(20);
+      for(let i = 0; i < sendingData.length; i++, index++){
+        sendingData[i] = data[index];
       }
       //Daten senden
     }
