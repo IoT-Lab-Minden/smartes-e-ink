@@ -222,20 +222,12 @@ export class HomePage implements OnInit {
     }
   }
 
-  stringToBytes(string) {
-    var array = new Uint8Array(string.length);
-    for (var i = 0, l = string.length; i < l; i++) {
-      array[i] = string.charCodeAt(i);
-    }
-    return array.buffer;
-  }
-
-  sendData(data: Uint8Array){
+  sendData(data: string){
     let index = 0;
     while(index < data.length){
       let sendingData = new Uint8Array(20);
       for(let i = 0; i < sendingData.length && index < data.length; i++, index++){
-        sendingData[i] = data[index];
+        sendingData[i] = data.charCodeAt(index);
       }
       if(this.connected) {
         this.ble.write(this.device.id, this.serviceUUID, this.characteristicUUID, sendingData.buffer);
