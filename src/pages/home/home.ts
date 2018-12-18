@@ -19,10 +19,12 @@ export class HomePage implements OnInit {
     text: ''
   }
 
+  device = {};
+
   @ViewChild('canvas') canvasEl: ElementRef;
   private _CANVAS: any;
   private _CONTEXT: any;
-  private device = {};
+
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
               public  ble: BLE, private statusBar: StatusBar)
@@ -101,10 +103,12 @@ export class HomePage implements OnInit {
   }
 
   connect(device) {
-    this.ble.connect(device.id).subscribe(
+    if(this.device != {}) {
+      this.ble.connect(device.id).subscribe(
         peripheral => this.onConnected(peripheral),
-      error => this.showConnectError()
-    );
+        error => this.showConnectError()
+      );
+    }
   }
 
   onConnected(peripheral){
