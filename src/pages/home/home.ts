@@ -2,11 +2,12 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavController, ActionSheetController, AlertController} from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import {BLE} from '@ionic-native/ble';
+import { Base64 } from '@ionic-native/base64';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
-  providers: [BLE]
+  providers: [BLE, Base64]
 })
 
 export class HomePage implements OnInit {
@@ -27,7 +28,7 @@ export class HomePage implements OnInit {
 
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
-              public  ble: BLE, private statusBar: StatusBar)
+              public  ble: BLE, private statusBar: StatusBar, private base64: Base64)
  {
   }
 
@@ -112,6 +113,7 @@ export class HomePage implements OnInit {
   }
 
   onConnected(peripheral){
+    this.device = peripheral;
     console.log("Verbunden");
   }
 

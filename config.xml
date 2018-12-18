@@ -84,4 +84,5 @@
     <plugin name="cordova-plugin-ble-central" spec="1.2.2" />
     <plugin name="cordova-plugin-statusbar" spec="2.4.2" />
     <engine name="android" spec="7.1.4" />
+    <plugin name="com-badrit-base64" spec="0.2.0" />
 </widget>
