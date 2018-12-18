@@ -3,6 +3,7 @@
 #include <SparkFun_APDS9960.h>
 #include "image_1.c"
 #include "image_2.c"
+#include "image_3.c"
 
 #define STATUS_PIN 5
 #define CS_PIN 2
@@ -12,10 +13,12 @@
 #define IMAGE_HEIGHT 600
 #define SPI_MODE SPI_MODE1
 #define REQUIRED_IMAGE_PASSES 11
+#define MAX_IMAGES 3 
 
 SparkFun_APDS9960 apds = SparkFun_APDS9960();
 int isr_flag = 0;
-int picture=1;
+int picture=0;
+const unsigned char *pictures[MAX_IMAGES];
 
 void clearScreen(void) {
   bool DeviceStatus;
@@ -95,21 +98,25 @@ void handleGesture() {
 			break;
 		case DIR_LEFT:
 			Serial.println("LEFT");
-			if(picture==2)
+       picture--;
+			if(picture==-1)
 			{
-				picture=1;
-			clearScreen();
-			sendImage(gImage_image_1);
+				picture=MAX_IMAGES-1;
 			}
+			clearScreen();
+			//sendImage(gImage_image_1);
+      sendImage(pictures[picture]);
 			break;
 		case DIR_RIGHT:
 			Serial.println("RIGHT");
-			if(picture==1)
+      picture++;
+			if(picture==MAX_IMAGES)
 			{
-				picture=2;
-			clearScreen();
-			sendImage(gImage_image_2);
+				picture=0;
 			}
+			clearScreen();
+			//sendImage(gImage_image_2);
+      sendImage(pictures[picture]);
 			break;
 		case DIR_NEAR:
 			Serial.println("NEAR");
@@ -129,6 +136,10 @@ void interruptRoutine()
 }
 
 void setup() {
+  pictures[0]=gImage_image_1;
+  pictures[1]=gImage_image_2;
+  pictures[2]=gImage_image_3; 
+  
   Serial.begin(9600);
   while (!Serial) {};
 
@@ -155,7 +166,7 @@ void setup() {
   digitalWrite(CS_PIN, HIGH);
 
   SPI.begin();
-  SPI.setBitOrder(MSBFIRST);
+  SPI.setBitOrder(LSBFIRST);
   SPI.setDataMode(SPI_MODE);
   SPI.setClockDivider(SPI_CLOCK_DIV4);  
 
