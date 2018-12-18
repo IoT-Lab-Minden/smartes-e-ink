@@ -22,6 +22,7 @@ export class HomePage implements OnInit {
   @ViewChild('canvas') canvasEl: ElementRef;
   private _CANVAS: any;
   private _CONTEXT: any;
+  private device = {};
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
               public  ble: BLE, private statusBar: StatusBar)
@@ -110,8 +111,12 @@ export class HomePage implements OnInit {
     console.log("Verbunden");
   }
 
-  disconnect() {
-    this.showDisconnectError();
+  disconnect(device) {
+   this.ble.disconnect(device.id).then(res => {
+     this.device = {};
+   }).catch(err => {
+     this.showDisconnectError()
+   })
   }
 
   showConnectDeviceDialog(device) {
@@ -127,7 +132,7 @@ export class HomePage implements OnInit {
         {
           text: 'Trennen',
           handler: () => {
-            this.disconnect();
+            this.disconnect(device);
           }
 
         },
