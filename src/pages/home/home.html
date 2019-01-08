@@ -20,20 +20,37 @@
   <ion-card id="devices">
     <ion-card-header text-center class="devices-header">Verfügbare Geräte</ion-card-header>
     <ion-card-content id="devices-content">
-      <ion-card class="device" (click)="showConnectDeviceDialog(device)" *ngFor="let device of devices">
+      <ion-card class="device" (click)="showConnectDeviceDialog(d)" *ngFor="let d of devices">
         <ion-row>
-          {{device.name}}
+          <ion-col>
+            {{d.name}}
+          </ion-col>
+          <ion-col>
+            <ion-icon name="checkmark" *ngIf="d.id == device.id"></ion-icon>
+          </ion-col>
         </ion-row>
         <ion-row>
-          {{device.id}}
+          {{d.id}}
         </ion-row>
       </ion-card>
     </ion-card-content>
     <div text-center>Stelle sicher, dass Bluetooth aktiviert ist.</div>
   </ion-card>
 
+  <ion-row>
+    <ion-col>
+      Bildposition auswählen
+    </ion-col>
+    <ion-col>
+      <ion-select name="line" required okText="Ok" cancelText="Abbrechen" placeholder="Auswählen">
+        <ion-option value="1">1</ion-option>
+        <ion-option value="2">2</ion-option>
+        <ion-option value="3">3</ion-option>
+      </ion-select>
+    </ion-col>
+  </ion-row>
+
   <button ion-button block (click)="choseImage()">Bild auswählen</button>
-  {{imageURL}}
   <button ion-button block (click)="uploadData()">Übertragen</button>
 
 </ion-content>

@@ -27,10 +27,11 @@ export class HomePage {
 
   connected = false;
 
-  serviceUUID = "";
-  characteristicUUID = "";
+  serviceUUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
+  characteristicUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
 
   imageURL = "";
+  dataURL = "";
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
               public  ble: BLE, private statusBar: StatusBar, private base64: Base64, private fileChooser: FileChooser, private filePath: FilePath) {
@@ -98,22 +99,32 @@ export class HomePage {
   }
 
   connect(device) {
-    if (this.connected) {
-      this.ble.connect(device.id).subscribe(
-        peripheral => this.onConnected(peripheral),
-        error => this.showConnectError()
-      );
-    }
+    console.log(device.id);
+    this.ble.connect(device.id).subscribe(
+      peripheral => this.onConnected(peripheral),
+      error => console.log(error)
+    );
+
   }
 
   onConnected(peripheral) {
+    console.log("verbunden");
+    //console.log(peripheral);
     this.device = peripheral;
-    console.log("Verbunden");
+    this.connected = true;
   }
 
   disconnect(device) {
     this.ble.disconnect(device.id).then(res => {
       this.connected = false;
+      this.device = {
+        'name': '',
+        'id': '',
+        'advertising': [2, 1, 6, 3, 3, 15, 24, 8, 9, 66, 97, 116, 116, 101, 114, 121],
+        'rssi': -55,
+        'services': [],
+        'characteristics': []
+      };
     }).catch(err => {
       this.showDisconnectError()
     })
@@ -128,31 +139,36 @@ export class HomePage {
   }
 
   uploadData() {
-    //if(this.connected){
+    //console.log(this.device);
+    //if (this.connected) {
     this.base64.encodeFile(this.imageURL).then((base64File: string) => {
-      console.log(base64File);
-      console.log("Test");
+      this.dataURL = base64File;
+      this.sendData();
     }, (err) => {
       console.log(err);
     });
     //} else {
-    //  this.showNoConnectionError();
+    //this.showNoConnectionError();
     //}
   }
 
-  sendData(data: string) {
-    let index = 0;
-    while (index < data.length) {
-      let sendingData = new Uint8Array(20);
-      for (let i = 0; i < sendingData.length && index < data.length; i++, index++) {
-        sendingData[i] = data.charCodeAt(index);
-      }
-      if (this.connected) {
-        this.ble.write(this.device.id, this.serviceUUID, this.characteristicUUID, sendingData.buffer);
-      }
+  stringToBytes(string) {
+    let array = new Uint8Array(string.length);
+    for (let i = 0, l = string.length; i < l; i++) {
+      array[i] = string.charCodeAt(i);
     }
+    return array.buffer;
   }
 
+  sendData() {
+    fetch(this.dataURL.substring(0)).then(function (response) {
+      return response.arrayBuffer()
+    })
+      .then(function (buffer) {
+        console.log(new Uint8Array(buffer));
+      });
+
+  }
 
   showBluetoothError() {
     let alert = this.alertCtrl.create({

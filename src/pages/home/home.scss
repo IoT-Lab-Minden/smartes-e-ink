@@ -33,3 +33,15 @@ p{
 ion-label{
   padding-left: 10px;
 }
+
+ion-row{
+  width: 100%;
+}
+
+ion-col, ion-select{
+  width: 50%;
+}
+
+ion-select{
+  float: right;
+}
