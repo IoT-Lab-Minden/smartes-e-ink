@@ -1,13 +1,15 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavController, ActionSheetController, AlertController} from 'ionic-angular';
-import { StatusBar } from '@ionic-native/status-bar';
+import {StatusBar} from '@ionic-native/status-bar';
 import {BLE} from '@ionic-native/ble';
-import { Base64 } from '@ionic-native/base64';
+import {Base64} from '@ionic-native/base64';
+import {FileChooser} from '@ionic-native/file-chooser';
+import { FilePath } from '@ionic-native/file-path';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
-  providers: [BLE, Base64]
+  providers: [BLE, Base64, FileChooser, FilePath]
 })
 
 export class HomePage implements OnInit {
@@ -23,7 +25,7 @@ export class HomePage implements OnInit {
   device = {
     'name': '',
     'id': '',
-    'advertising': [2,1,6,3,3,15,24,8,9,66,97,116,116,101,114,121],
+    'advertising': [2, 1, 6, 3, 3, 15, 24, 8, 9, 66, 97, 116, 116, 101, 114, 121],
     'rssi': -55,
     'services': [],
     'characteristics': []
@@ -34,26 +36,28 @@ export class HomePage implements OnInit {
   serviceUUID = "";
   characteristicUUID = "";
 
-  @ViewChild('canvas') canvasEl: ElementRef;
-  private _CANVAS: any;
-  private _CONTEXT: any;
+  imageURL = "";
 
+  /**
+   @ViewChild('canvas') canvasEl: ElementRef;
+   private _CANVAS: any;
+   private _CONTEXT: any;
+   **/
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
-              public  ble: BLE, private statusBar: StatusBar, private base64: Base64)
- {
+              public  ble: BLE, private statusBar: StatusBar, private base64: Base64, private fileChooser: FileChooser, private filePath: FilePath) {
   }
 
   ngOnInit(): void {
 
     this.ionViewDidLoad();
-    console.log(this.base64.encodeFile("src/katze_2.jpg"));
+    //console.log(this.base64.encodeFile("src/katze_2.jpg"));
 
   }
 
   onDeviceDiscovered(device) {
     //console.log(device);
-    if (device.name!=null) {
+    if (device.name != null) {
       this.devices.push(device);
     }
   }
@@ -113,21 +117,20 @@ export class HomePage implements OnInit {
   }
 
   uploadData() {
-    if(this.connected){
-      var image = new Image();
-      image.src = this._CANVAS.toDataURL;
-      if(image != null){
-
-        //Image in BAse 64 Umwandeln
-        this.sendData("test");
-      }
-    } else {
-      this.showNoConnectionError();
-    }
+    //if(this.connected){
+    this.base64.encodeFile(this.imageURL).then((base64File: string) => {
+      console.log(base64File);
+      console.log("Test");
+    }, (err) => {
+      console.log(err);
+    });
+    //} else {
+    //  this.showNoConnectionError();
+    //}
   }
 
   connect(device) {
-    if(this.connected) {
+    if (this.connected) {
       this.ble.connect(device.id).subscribe(
         peripheral => this.onConnected(peripheral),
         error => this.showConnectError()
@@ -135,17 +138,17 @@ export class HomePage implements OnInit {
     }
   }
 
-  onConnected(peripheral){
+  onConnected(peripheral) {
     this.device = peripheral;
     console.log("Verbunden");
   }
 
   disconnect(device) {
-   this.ble.disconnect(device.id).then(res => {
-     this.connected = false;
-   }).catch(err => {
-     this.showDisconnectError()
-   })
+    this.ble.disconnect(device.id).then(res => {
+      this.connected = false;
+    }).catch(err => {
+      this.showDisconnectError()
+    })
   }
 
   showConnectDeviceDialog(device) {
@@ -190,40 +193,43 @@ export class HomePage implements OnInit {
       error => this.showBluetoothError()
     );
 
-    this.initLines();
+    /**
+     this.initLines();
 
-    this._CANVAS = this.canvasEl.nativeElement;
-    this._CANVAS.width = 800;
-    this._CANVAS.height = 600;
+     this._CANVAS = this.canvasEl.nativeElement;
+     this._CANVAS.width = 800;
+     this._CANVAS.height = 600;
 
-    this.initialiseCanvas();
+     this.initialiseCanvas();
+     **/
   }
 
-  initialiseCanvas() {
+  /**
+   initialiseCanvas() {
     if (this._CANVAS.getContext) {
       this.setupCanvas();
     }
   }
 
-  setupCanvas() {
+   setupCanvas() {
     this._CONTEXT = this._CANVAS.getContext('2d');
     this._CONTEXT.fillStyle = '#3e3e3e';
     this._CONTEXT.fillRect(0, 0, 500, 500);
   }
 
-  clearCanvas() {
+   clearCanvas() {
     this._CONTEXT.clearRect(0, 0, this._CANVAS.width, this._CANVAS.height);
     this.setupCanvas();
   }
 
-  addLine() {
+   addLine() {
     if (this.newLine.line <= this.lines.length) {
       this.lines[this.newLine.line - 1] = this.newLine.text;
     }
     this.drawText();
   }
 
-  drawText() {
+   drawText() {
     this.clearCanvas();
     this._CONTEXT.fillStyle = '#ffffff';
     this._CONTEXT.font = '30px Arial';
@@ -232,21 +238,27 @@ export class HomePage implements OnInit {
       this._CONTEXT.fillText(this.lines[i], 10, 50 + (35 * i));
     }
   }
-
-  sendData(data: string){
+   **/
+  sendData(data: string) {
     let index = 0;
-    while(index < data.length){
+    while (index < data.length) {
       let sendingData = new Uint8Array(20);
-      for(let i = 0; i < sendingData.length && index < data.length; i++, index++){
+      for (let i = 0; i < sendingData.length && index < data.length; i++, index++) {
         sendingData[i] = data.charCodeAt(index);
       }
-      if(this.connected) {
+      if (this.connected) {
         this.ble.write(this.device.id, this.serviceUUID, this.characteristicUUID, sendingData.buffer);
       }
     }
   }
 
+  choseImage() {
+    this.fileChooser.open()
+      .then(uri => this.filePath.resolveNativePath(uri)
+        .then(filePath => this.imageURL = filePath)
+        .catch(err => console.log(err)))
+      .catch(e => console.log(e));
+  }
 }
-
 
 
