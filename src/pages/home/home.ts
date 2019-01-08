@@ -14,8 +14,15 @@ import {FilePath} from '@ionic-native/file-path';
 
 export class HomePage {
 
+  /**
+   * Liste aller gefundenen Geräte
+   */
   devices: Array<any>;
 
+  /**
+   * Aktuell verbundenes Gerät
+   * @type {{name: string; id: string; advertising: number[]; rssi: number; services: any[]; characteristics: any[]}}
+   */
   device = {
     'name': '',
     'id': '',
@@ -25,18 +32,55 @@ export class HomePage {
     'characteristics': []
   };
 
+  /**
+   *
+   * @type {boolean}
+   */
   connected = false;
 
+  /**
+   * UUID des Services
+   * @type {string}
+   */
   serviceUUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
+
+  /**
+   * UUID der zu ändernen Characteristik
+   * @type {string}
+   */
   characteristicUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
 
+  /**
+   * Pfad zum ausgewähltem Bild
+   * @type {string}
+   */
   imageURL = "";
+
+  /**
+   * Base64 String des Bildes
+   * @type {string}
+   */
   dataURL = "";
 
+  /**
+   * Konstruktor der Klasse
+   * @param {NavController} navCtrl
+   * @param {AlertController} alertCtrl Controller für Popups
+   * @param {ActionSheetController} actionSheetCtrl Controller für Auswahlfenster
+   * @param {BLE} ble Natives Bluetooth LE Plugin
+   * @param {StatusBar} statusBar Native StatusBar
+   * @param {Base64} base64 Base64 Encoder
+   * @param {FileChooser} fileChooser Nativer Datenexplorer
+   * @param {FilePath} filePath
+   */
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
               public  ble: BLE, private statusBar: StatusBar, private base64: Base64, private fileChooser: FileChooser, private filePath: FilePath) {
   }
 
+  /**
+   * Wird beim Start der App ausgeführt.
+   * Initialisiert StatusBar und Geräteliste
+   */
   ionViewDidLoad() {
 
     this.statusBar.overlaysWebView(true);
@@ -50,6 +94,10 @@ export class HomePage {
     );
   }
 
+  /**
+   * Scannt nach Bluetoothgeräten in der Umgebung
+   * @param refresher Objekt im Frontend
+   */
   doRefresh(refresher) {
     this.devices = new Array<any>(0);
     this.ble.scan([], 2).subscribe(
@@ -61,13 +109,20 @@ export class HomePage {
     }, 2000);
   }
 
+  /**
+   * Fügt ein Gerät zur Liste hinzu, wenn es beim scannen entdeckt wurde.
+   * @param device Entdecktes Gerät
+   */
   onDeviceDiscovered(device) {
-    //console.log(device);
     if (device.name != null) {
       this.devices.push(device);
     }
   }
 
+  /**
+   * Öffnet einen Dialog um sich mit Gerät zu verbinden oder Vernindung zu trennen.
+   * @param device Ausgewähltes Gerät
+   */
   showConnectDeviceDialog(device) {
     let actionSheet = this.actionSheetCtrl.create({
       title: device.name,
@@ -98,6 +153,10 @@ export class HomePage {
     actionSheet.present();
   }
 
+  /**
+   * Verbindet sich mit dem angegebenen Gerät
+   * @param device Gerät mitdem sich verbunden werden soll
+   */
   connect(device) {
     console.log(device.id);
     this.ble.connect(device.id).subscribe(
@@ -107,6 +166,10 @@ export class HomePage {
 
   }
 
+  /**
+   * Speichert das verbundene Gerät zwischen
+   * @param peripheral Verbundene Gerät
+   */
   onConnected(peripheral) {
     console.log("verbunden");
     //console.log(peripheral);
@@ -130,6 +193,9 @@ export class HomePage {
     })
   }
 
+  /**
+   * Öffnet die Bildergalerie und Speichert den Pfad des ausgewählten Bildes
+   */
   choseImage() {
     this.fileChooser.open()
       .then(uri => this.filePath.resolveNativePath(uri)
@@ -138,12 +204,21 @@ export class HomePage {
       .catch(e => console.log(e));
   }
 
+  /**
+   * Sendet Bild an das verbundene Gerät
+   */
   uploadData() {
     //console.log(this.device);
     //if (this.connected) {
     this.base64.encodeFile(this.imageURL).then((base64File: string) => {
       this.dataURL = base64File;
-      this.sendData();
+      console.log(this.stringToBytes("start"));
+      fetch(this.dataURL.substring(0)).then(function (response) {
+        return response.arrayBuffer()
+      })
+        .then(function (buffer) {
+          console.log(new Uint8Array(buffer));
+        });
     }, (err) => {
       console.log(err);
     });
@@ -152,6 +227,11 @@ export class HomePage {
     //}
   }
 
+  /**
+   * Übersetzt einen String in ein Byte Array
+   * @param string Zu Übersetzene String
+   * @returns String als ArrayBuffer
+   */
   stringToBytes(string) {
     let array = new Uint8Array(string.length);
     for (let i = 0, l = string.length; i < l; i++) {
@@ -160,15 +240,6 @@ export class HomePage {
     return array.buffer;
   }
 
-  sendData() {
-    fetch(this.dataURL.substring(0)).then(function (response) {
-      return response.arrayBuffer()
-    })
-      .then(function (buffer) {
-        console.log(new Uint8Array(buffer));
-      });
-
-  }
 
   showBluetoothError() {
     let alert = this.alertCtrl.create({
