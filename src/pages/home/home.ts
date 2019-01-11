@@ -5,6 +5,7 @@ import {BLE} from '@ionic-native/ble';
 import {Base64} from '@ionic-native/base64';
 import {FileChooser} from '@ionic-native/file-chooser';
 import {FilePath} from '@ionic-native/file-path';
+import {LoadingController} from 'ionic-angular';
 
 @Component({
   selector: 'page-home',
@@ -62,6 +63,8 @@ export class HomePage {
    */
   dataURL = "";
 
+  data = new Uint8Array(2);
+
   /**
    * Konstruktor der Klasse
    * @param {NavController} navCtrl
@@ -74,7 +77,8 @@ export class HomePage {
    * @param {FilePath} filePath
    */
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public actionSheetCtrl: ActionSheetController,
-              public  ble: BLE, private statusBar: StatusBar, private base64: Base64, private fileChooser: FileChooser, private filePath: FilePath) {
+              public  ble: BLE, private statusBar: StatusBar, private base64: Base64, private fileChooser: FileChooser,
+              private filePath: FilePath, private loading: LoadingController) {
   }
 
   /**
@@ -205,27 +209,70 @@ export class HomePage {
   }
 
   /**
-   * Sendet Bild an das verbundene Gerät
+   *
    */
-  uploadData() {
+  base64ToByteArray(ble: BLE, device, serviceUUID: string, characteristicUUID: string) {
     //console.log(this.device);
     //if (this.connected) {
+    let data = new Uint8Array(2);
     this.base64.encodeFile(this.imageURL).then((base64File: string) => {
       this.dataURL = base64File;
-      console.log(this.stringToBytes("start"));
       fetch(this.dataURL.substring(0)).then(function (response) {
         return response.arrayBuffer()
+      }).then(function (buffer) {
+
       })
-        .then(function (buffer) {
-          console.log(new Uint8Array(buffer));
-        });
+
     }, (err) => {
       console.log(err);
     });
     //} else {
     //this.showNoConnectionError();
     //}
+    console.log(data);
   }
+
+  sendTest(){
+    let data = new Uint8Array(30006);
+    let index = 0;
+    console.log(data);
+    while (index < data.length) {
+      let sendingData = ""
+      for(let j = 0; j < 20 && index < data.length; j++){
+        let value = 0;
+        let block = new Uint8Array(4);
+        //Umwandeln in Graustufen
+        for(let i = 0; i < 4 && index < data.length; i++,index++){
+          if(data[index] < 64){
+            block[i] = 0;
+          } else if(data[index] < 128){
+            block[i] = 1;
+          } else if(data[index] < 192){
+            block[i] = 2;
+          } else {
+            block[i] = 3;
+          }
+        }
+        //Zusammenfassen
+        value = data[0] + data[1] * 4 + data[2] * 16 + data[3] * 64;
+        sendingData += ""+value;
+      }
+      this.ble.write(this.device.id,this.serviceUUID,this.characteristicUUID,this.stringToBytes(sendingData));
+
+    }
+  }
+
+  onUpload() {
+    const loader = this.loading.create({
+      content: "Sende Daten..."
+    });
+    loader.present();
+
+    this.sendTest();
+
+    loader.dismiss();
+  }
+
 
   /**
    * Übersetzt einen String in ein Byte Array
