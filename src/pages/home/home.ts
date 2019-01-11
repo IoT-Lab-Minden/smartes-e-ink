@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {NavController, ActionSheetController, AlertController} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {BLE} from '@ionic-native/ble';
@@ -63,7 +63,15 @@ export class HomePage {
    */
   dataURL = "";
 
-  data = new Uint8Array(2);
+  newLine = {
+    line: 0,
+    text: ''
+  }
+
+
+  @ViewChild('canvas') canvasEl: ElementRef;
+  private _CANVAS: any;
+  private _CONTEXT: any;
 
   /**
    * Konstruktor der Klasse
@@ -96,6 +104,49 @@ export class HomePage {
       device => this.onDeviceDiscovered(device),
       error => this.showBluetoothError()
     );
+
+    this.initLines();
+
+    this._CANVAS = this.canvasEl.nativeElement;
+    this._CANVAS.width = 500;
+    this._CANVAS.height = 500;
+
+    this.initialiseCanvas();
+  }
+
+  initLines() {
+    this.lines = Array(5);
+    for (let i = 0; i < this.lines.length; i++) {
+      this.lines[i] = "";
+    }
+  }
+
+  setupCanvas() {
+    this._CONTEXT = this._CANVAS.getContext('2d');
+    this._CONTEXT.fillStyle = '#3e3e3e';
+    this._CONTEXT.fillRect(0, 0, 500, 500);
+  }
+
+  clearCanvas() {
+    this._CONTEXT.clearRect(0, 0, this._CANVAS.width, this._CANVAS.height);
+    this.setupCanvas();
+  }
+
+  addLine() {
+    if (this.newLine.line <= this.lines.length) {
+      this.lines[this.newLine.line - 1] = this.newLine.text;
+    }
+    this.drawText();
+  }
+
+  drawText() {
+    this.clearCanvas();
+    this._CONTEXT.fillStyle = '#ffffff';
+    this._CONTEXT.font = '30px Arial';
+
+    for (let i = 0; i < this.lines.length; i++) {
+      this._CONTEXT.fillText(this.lines[i], 10, 50 + (35 * i));
+    }
   }
 
   /**
@@ -232,22 +283,22 @@ export class HomePage {
     console.log(data);
   }
 
-  sendTest(){
+  sendTest() {
     let data = new Uint8Array(30006);
     let index = 0;
     console.log(data);
     while (index < data.length) {
       let sendingData = ""
-      for(let j = 0; j < 20 && index < data.length; j++){
+      for (let j = 0; j < 20 && index < data.length; j++) {
         let value = 0;
         let block = new Uint8Array(4);
         //Umwandeln in Graustufen
-        for(let i = 0; i < 4 && index < data.length; i++,index++){
-          if(data[index] < 64){
+        for (let i = 0; i < 4 && index < data.length; i++, index++) {
+          if (data[index] < 64) {
             block[i] = 0;
-          } else if(data[index] < 128){
+          } else if (data[index] < 128) {
             block[i] = 1;
-          } else if(data[index] < 192){
+          } else if (data[index] < 192) {
             block[i] = 2;
           } else {
             block[i] = 3;
@@ -255,9 +306,9 @@ export class HomePage {
         }
         //Zusammenfassen
         value = data[0] + data[1] * 4 + data[2] * 16 + data[3] * 64;
-        sendingData += ""+value;
+        sendingData += "" + value;
       }
-      this.ble.write(this.device.id,this.serviceUUID,this.characteristicUUID,this.stringToBytes(sendingData));
+      this.ble.write(this.device.id, this.serviceUUID, this.characteristicUUID, this.stringToBytes(sendingData));
 
     }
   }

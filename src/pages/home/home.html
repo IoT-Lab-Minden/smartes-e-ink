@@ -37,6 +37,35 @@
     <div text-center>Stelle sicher, dass Bluetooth aktiviert ist.</div>
   </ion-card>
 
+  <ion-card id="editor">
+
+    <ion-card-header class="devices-header" text-center="">Daten-Editor</ion-card-header>
+
+    <ion-card-content>
+      <form (ngSubmit)="addLine()">
+        <ion-item>
+          <ion-input type="text" [(ngModel)]="newLine.text" name="text" id="text-input" placeholder="Zeileninhalt"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Zeile</ion-label>
+          <ion-select [(ngModel)]="newLine.line" name="line" required okText="Ok" cancelText="Abbrechen" placeholder="Zeile auswählen">
+            <ion-option value="1">1</ion-option>
+            <ion-option value="2">2</ion-option>
+            <ion-option value="3">3</ion-option>
+            <ion-option value="4">4</ion-option>
+            <ion-option value="5">5</ion-option>
+          </ion-select>
+        </ion-item>
+        <button ion-button type="submit" block>Zeile schreiben</button>
+      </form>
+    </ion-card-content>
+
+    <ion-card-content id="editor-content">
+      <canvas #canvas></canvas>
+    </ion-card-content>
+
+  </ion-card>
+
   <ion-row>
     <ion-col>
       Bildposition auswählen
@@ -49,7 +78,7 @@
       </ion-select>
     </ion-col>
   </ion-row>
-  
+
 
   <button ion-button block (click)="choseImage()">Bild auswählen</button>
   <button ion-button block (click)="onUpload()">Übertragen</button>
