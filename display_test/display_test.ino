@@ -67,16 +67,35 @@ void sendImage(const unsigned char *image) {
   DeviceStatus = !DeviceStatus;
 
   for (unsigned int pass = 0; pass < REQUIRED_IMAGE_PASSES; pass++) {
-    for (unsigned int imageByteIdx = 0, x = 0, y = 0; imageByteIdx < 120000; imageByteIdx++) {
-      if(imageByteIdx < sizeof(gImage_image_2)){
-        data = *(image+imageByteIdx);
-      } else {
-        data = 0x00;
+    for (unsigned int imageByteIdx = 0; imageByteIdx < 30000; imageByteIdx=imageByteIdx+100) {
+      for(unsigned int i=0;i<100;i++)
+      {
+        if(imageByteIdx < sizeof(gImage_image_1)){
+         data = *(image+imageByteIdx+i);
+        } else {
+          data = 0x00;
+        }
+        SPI.transfer(data);
+        while (digitalRead(STATUS_PIN) == DeviceStatus) { }
+        DeviceStatus = !DeviceStatus;
+        SPI.transfer(data);
+        while (digitalRead(STATUS_PIN) == DeviceStatus) { }
+        DeviceStatus = !DeviceStatus;
       }
-      SPI.transfer(data);
-
-      while (digitalRead(STATUS_PIN) == DeviceStatus) { }
-      DeviceStatus = !DeviceStatus;
+      for(unsigned int i=0;i<100;i++)
+      {
+        if(imageByteIdx < sizeof(gImage_image_1)){
+         data = *(image+imageByteIdx+i);
+        } else {
+          data = 0x00;
+        }
+        SPI.transfer(data);
+        while (digitalRead(STATUS_PIN) == DeviceStatus) { }
+        DeviceStatus = !DeviceStatus;
+        SPI.transfer(data);
+        while (digitalRead(STATUS_PIN) == DeviceStatus) { }
+        DeviceStatus = !DeviceStatus;
+      }
     }    
   }
   
