@@ -6,21 +6,22 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
 
   <ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
       pullingIcon="arrow-dropdown"
       pullingText="Pull to refresh"
       refreshingSpinner="circles"
-      refreshingText="Refreshing...">
+      refreshingText="Refreshing..."
+      refresher-text-color="#ffffff">
     </ion-refresher-content>
   </ion-refresher>
 
-  <ion-card id="devices">
-    <ion-card-header text-center class="devices-header">Verfügbare Geräte</ion-card-header>
-    <ion-card-content id="devices-content">
-      <ion-card class="device" (click)="showConnectDeviceDialog(d)" *ngFor="let d of devices">
+  <ion-card>
+   <div text-center class="title">Verfügbare Geräte</div>
+    <ion-card-content>
+      <ion-card (click)="showConnectDeviceDialog(d)" *ngFor="let d of devices">
         <ion-row>
           <ion-col>
             {{d.name}}
@@ -37,14 +38,14 @@
     <div text-center>Stelle sicher, dass Bluetooth aktiviert ist.</div>
   </ion-card>
 
-  <ion-card id="editor">
+  <ion-card>
 
-    <ion-card-header class="devices-header" text-center="">Daten-Editor</ion-card-header>
+    <div text-center class="header">Daten-Editor</div>
 
     <ion-card-content>
       <form (ngSubmit)="addLine()">
         <ion-item>
-          <ion-input type="text" [(ngModel)]="newLine.text" name="text" id="text-input" placeholder="Zeileninhalt"></ion-input>
+          <ion-input type="text" [(ngModel)]="newLine.text" name="text" placeholder="Zeileninhalt"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>Zeile</ion-label>
@@ -63,31 +64,37 @@
       </form>
     </ion-card-content>
   </ion-card>
-  <ion-card id="painting">
 
-    <ion-card-content id="editor-content">
+  <ion-card>
+    <div text-center class="header">Hintergrundfarbe</div>
+    <ion-card-content>
+      <ion-row>
+        <ion-col *ngFor="let color of colors" [style.background]="color" class="color-block" tappable (click)="selectBackground(color)"></ion-col>
+      </ion-row>
+    </ion-card-content>
+    <div text-center></div>
+  </ion-card>
+
+  <ion-card>
+    <div text-center class="header">Schriftfarbe</div>
+    <ion-card-content>
       <ion-row>
         <ion-col *ngFor="let color of colors" [style.background]="color" class="color-block" tappable (click)="selectColor(color)"></ion-col>
       </ion-row>
-
-      <ion-row radio-group [(ngModel)]="selectedColor">
-        <ion-col *ngFor="let color of colors" text-center>
-          <ion-radio [value]="color"></ion-radio>
-        </ion-col>
-      </ion-row>
-      <canvas #canvas (touchstart)="startDrawing($event)" (touchmove)="moved($event)"></canvas>
     </ion-card-content>
-
   </ion-card>
 
-  <button ion-button block (click)="clearCanvas()">Bild zurücksetzen</button>
+  <div>
+    <canvas #canvas (touchstart)="startDrawing($event)" (touchmove)="moved($event)"></canvas>
+    <button ion-button block (click)="clearCanvas()">Bild zurücksetzen</button>
+  </div>
 
   <ion-row>
     <ion-col>
       Bildposition auswählen
     </ion-col>
     <ion-col>
-      <ion-select name="line" required okText="Ok" cancelText="Abbrechen" placeholder="Auswählen">
+      <ion-select required okText="Ok" cancelText="Abbrechen" placeholder="Auswählen">
         <ion-option value="1">1</ion-option>
         <ion-option value="2">2</ion-option>
         <ion-option value="3">3</ion-option>
