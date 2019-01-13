@@ -54,17 +54,33 @@
             <ion-option value="3">3</ion-option>
             <ion-option value="4">4</ion-option>
             <ion-option value="5">5</ion-option>
+            <ion-option value="6">6</ion-option>
+            <ion-option value="7">7</ion-option>
+            <ion-option value="8">8</ion-option>
           </ion-select>
         </ion-item>
         <button ion-button type="submit" block>Zeile schreiben</button>
       </form>
     </ion-card-content>
+  </ion-card>
+  <ion-card id="painting">
 
     <ion-card-content id="editor-content">
-      <canvas #canvas></canvas>
+      <ion-row>
+        <ion-col *ngFor="let color of colors" [style.background]="color" class="color-block" tappable (click)="selectColor(color)"></ion-col>
+      </ion-row>
+
+      <ion-row radio-group [(ngModel)]="selectedColor">
+        <ion-col *ngFor="let color of colors" text-center>
+          <ion-radio [value]="color"></ion-radio>
+        </ion-col>
+      </ion-row>
+      <canvas #canvas (touchstart)="startDrawing($event)" (touchmove)="moved($event)"></canvas>
     </ion-card-content>
 
   </ion-card>
+
+  <button ion-button block (click)="clearCanvas()">Bild zurücksetzen</button>
 
   <ion-row>
     <ion-col>
@@ -79,8 +95,6 @@
     </ion-col>
   </ion-row>
 
-
-  <button ion-button block (click)="choseImage()">Bild auswählen</button>
   <button ion-button block (click)="onUpload()">Übertragen</button>
 
 </ion-content>

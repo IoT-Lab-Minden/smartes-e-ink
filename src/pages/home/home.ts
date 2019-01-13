@@ -63,11 +63,19 @@ export class HomePage {
    */
   dataURL = "";
 
+  lines: string[];
+
   newLine = {
     line: 0,
     text: ''
   }
 
+  saveX: number;
+  saveY: number
+
+  selectedColor = '#000000';
+
+  colors = [ '#eeeeee', '#444444', '#000000'];
 
   @ViewChild('canvas') canvasEl: ElementRef;
   private _CANVAS: any;
@@ -108,28 +116,30 @@ export class HomePage {
     this.initLines();
 
     this._CANVAS = this.canvasEl.nativeElement;
-    this._CANVAS.width = 500;
-    this._CANVAS.height = 500;
+    this._CANVAS.width = 400;
+    this._CANVAS.height = 300;
 
     this.initialiseCanvas();
   }
 
   initLines() {
-    this.lines = Array(5);
+    this.lines = Array(7);
     for (let i = 0; i < this.lines.length; i++) {
       this.lines[i] = "";
     }
   }
 
-  setupCanvas() {
-    this._CONTEXT = this._CANVAS.getContext('2d');
-    this._CONTEXT.fillStyle = '#3e3e3e';
-    this._CONTEXT.fillRect(0, 0, 500, 500);
+  initialiseCanvas() {
+    if (this._CANVAS.getContext) {
+      this._CONTEXT = this._CANVAS.getContext('2d');
+      this._CONTEXT.fillStyle = '#ffffff';
+      this._CONTEXT.fillRect(0, 0, 400, 300);
+    }
   }
 
   clearCanvas() {
     this._CONTEXT.clearRect(0, 0, this._CANVAS.width, this._CANVAS.height);
-    this.setupCanvas();
+    this.initialiseCanvas();
   }
 
   addLine() {
@@ -141,12 +151,45 @@ export class HomePage {
 
   drawText() {
     this.clearCanvas();
-    this._CONTEXT.fillStyle = '#ffffff';
+    this._CONTEXT.fillStyle = '#000000';
     this._CONTEXT.font = '30px Arial';
 
     for (let i = 0; i < this.lines.length; i++) {
-      this._CONTEXT.fillText(this.lines[i], 10, 50 + (35 * i));
+      this._CONTEXT.fillText(this.lines[i], 5, 10 + (35 * i));
     }
+  }
+
+  selectColor(color) {
+    this.selectedColor = color;
+  }
+
+  startDrawing(ev) {
+    var canvasPosition = this._CANVAS.getBoundingClientRect();
+
+    this.saveX = ev.touches[0].pageX - canvasPosition.x;
+    this.saveY = ev.touches[0].pageY - canvasPosition.y;
+  }
+
+  moved(ev) {
+    var canvasPosition = this._CANVAS.getBoundingClientRect();
+
+    let ctx = this._CANVAS.getContext('2d');
+    let currentX = ev.touches[0].pageX - canvasPosition.x;
+    let currentY = ev.touches[0].pageY - canvasPosition.y;
+
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = this.selectedColor;
+    ctx.lineWidth = 5;
+
+    ctx.beginPath();
+    ctx.moveTo(this.saveX, this.saveY);
+    ctx.lineTo(currentX, currentY);
+    ctx.closePath();
+
+    ctx.stroke();
+
+    this.saveX = currentX;
+    this.saveY = currentY;
   }
 
   /**
@@ -284,32 +327,34 @@ export class HomePage {
   }
 
   sendTest() {
-    let data = new Uint8Array(30006);
-    let index = 0;
+    let imageData = this._CONTEXT.getImageData(0, 0, 400, 300);
+    let data = imageData.data;
     console.log(data);
-    while (index < data.length) {
-      let sendingData = ""
-      for (let j = 0; j < 20 && index < data.length; j++) {
-        let value = 0;
+    for (let i = 0; i < data.length; i = i + 4) {
+      let sendingData = "";
+      for (let k = 0; k < 20; k++, i += 4) {
         let block = new Uint8Array(4);
-        //Umwandeln in Graustufen
-        for (let i = 0; i < 4 && index < data.length; i++, index++) {
-          if (data[index] < 64) {
-            block[i] = 0;
-          } else if (data[index] < 128) {
-            block[i] = 1;
-          } else if (data[index] < 192) {
-            block[i] = 2;
+        for (let k = 0; k < 4; k++) {
+          let gray = ((data[i] + data[i + 1] + data[i + 2]) / 3);
+          console.log(gray);
+          console.log(data[i + 1]);
+          if (gray > 64) {
+            block[k] = 3;
+          } else if (gray > 128) {
+            block[k] = 2;
+          } else if (gray > 192) {
+            block[k] = 1;
           } else {
-            block[i] = 3;
+            block[k] = 0;
           }
         }
-        //Zusammenfassen
-        value = data[0] + data[1] * 4 + data[2] * 16 + data[3] * 64;
-        sendingData += "" + value;
+        let pixelBlock = (block[0] + block[1] * 4 + block[2] * 16 + block[3] * 64).toString();
+        while (pixelBlock.length < 3) {
+          pixelBlock = 0 + "" + pixelBlock;
+        }
+        sendingData += pixelBlock;
       }
       this.ble.write(this.device.id, this.serviceUUID, this.characteristicUUID, this.stringToBytes(sendingData));
-
     }
   }
 
