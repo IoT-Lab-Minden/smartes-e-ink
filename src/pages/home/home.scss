@@ -1,53 +1,15 @@
-page-home {
-
-}
-
-#editor-content{
-  min-height: 50px;
-}
-
-ion-card{
+ion-content, .scroll-content, ion-card{
+  padding: 0;
   margin: 0;
-  text-align: left;
-}
-
-#devices-content{
-  padding: 5px;
-}
-
-.device{
-  padding: 5px;
-}
-
-.devices-header{
-  padding: 10px;
-  font-size: 12pt;
-}
-
-p{
-  padding: 5px 0 5px 0;
-  margin: 0;
-  width: 100%;
-}
-
-ion-label{
-  padding-left: 10px;
-}
-
-ion-row{
-  width: 100%;
-}
-
-ion-col, ion-select{
-  width: 50%;
-}
-
-ion-select{
-  float: right;
+  color: #ffffff;
 }
 
 canvas{
   border: 1px solid #000000;
-  width: 400px;
-  height: 300px;
+  align-self: center;
 }
+
+.color-block{
+  height: 20px;
+}
+

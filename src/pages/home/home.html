@@ -11,10 +11,9 @@
   <ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
       pullingIcon="arrow-dropdown"
-      pullingText="Pull to refresh"
+      pullingText="Ziehen zum scannen"
       refreshingSpinner="circles"
-      refreshingText="Refreshing..."
-      refresher-text-color="#ffffff">
+      refreshingText="Refreshing...">
     </ion-refresher-content>
   </ion-refresher>
 
@@ -102,6 +101,6 @@
     </ion-col>
   </ion-row>
 
-  <button ion-button block (click)="onUpload()">Übertragen</button>
+  <button ion-button block (click)="onUpload()" >Übertragen</button>
 
 </ion-content>
