@@ -20,7 +20,7 @@ Before you install the App make sure you have enabled third-party apps on your s
 
 ### Need more help with the App? 
 
-Check our [guide](https://iot-lab-minden.github.io/smartes-e-ink/app-guide.html)!
+Check our [guide](app-guide.mdl)!
 
 ## Requirements: 
 
@@ -28,9 +28,9 @@ Check our [guide](https://iot-lab-minden.github.io/smartes-e-ink/app-guide.html)
 
 ## Documentation: 
 
-[Documentation of Controller](https://iot-lab-minden.github.io/smartes-e-ink/board.html)
+[Documentation of Controller](board.md)
 
-[Documentation of App](https://iot-lab-minden.github.io/smartes-e-ink/app.html)
+[Documentation of App](app.md)
 
 ## Team
 
