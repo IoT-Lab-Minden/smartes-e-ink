@@ -394,7 +394,7 @@ export class HomePage {
         }
         this.ble.write(this.device.id, this.serviceUUID, this.sendUUID, this.stringToBytes(sendingData)).catch(err => {
           let alert = this.alertCtrl.create({
-            title: 'Fehler beim Übertragen',
+            title: 'Error while sending image',
             subTitle: err,
             buttons: ['Ok']
           });
