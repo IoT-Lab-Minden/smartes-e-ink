@@ -28,9 +28,9 @@ paste user manual link here
 
 ## Documentation: 
 
-[Documentation of Controller](https://github.com/IoT-Lab-Minden/smartes-e-ink/tree/board-master)
+[Documentation of Controller](https://iot-lab-minden.github.io/smartes-e-ink/board)
 
-[Documentation of App](https://github.com/IoT-Lab-Minden/smartes-e-ink/tree/app-master)
+[Documentation of App](https://iot-lab-minden.github.io/smartes-e-ink/app.html)
 
 ## Team
 
