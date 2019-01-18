@@ -239,7 +239,7 @@ export class HomePage {
     let t = 0;
     while(i < data.length){
       let sendingData = "";
-      for (let j = 0; j < 20 && i < data.length; i = i + 4, j++) {
+      for (let j = 0; j < 20 && i < data.length; i = i + 16, j++) {
         t++;
         let block = new Uint8Array(4);
         for (let k = 0; k < 4; k++) {
