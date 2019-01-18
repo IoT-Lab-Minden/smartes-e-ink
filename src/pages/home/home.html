@@ -6,54 +6,88 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
 
   <ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
       pullingIcon="arrow-dropdown"
-      pullingText="Pull to refresh"
+      pullingText="Pull down to scan"
       refreshingSpinner="circles"
-      refreshingText="Refreshing...">
+      refreshingText="Scanning...">
     </ion-refresher-content>
   </ion-refresher>
 
-  <ion-card id="devices">
-    <ion-card-header text-center class="devices-header">Verfügbare Geräte</ion-card-header>
-    <ion-card-content id="devices-content">
-      <ion-card class="device" (click)="showConnectDeviceDialog(s)" *ngFor="let s of devices">{{s}}</ion-card>
+  <ion-card>
+   <div text-center class="title">Found Devices</div>
+    <ion-card-content>
+      <ion-card (click)="showConnectDeviceDialog(d)" *ngFor="let d of devices">
+        <ion-row>
+          <ion-col>
+            {{d.name}}
+          </ion-col>
+          <ion-col>
+            <ion-icon name="checkmark" *ngIf="d.id == device.id"></ion-icon>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          {{d.id}}
+        </ion-row>
+      </ion-card>
     </ion-card-content>
-    <div text-center>Stelle sicher, dass Bluetooth aktiviert ist.</div>
+    <div text-center>Make sure that bluetooth is enabled.</div>
   </ion-card>
 
-  <ion-card id="editor">
+  <ion-card>
 
-    <ion-card-header class="devices-header" text-center="">Daten-Editor</ion-card-header>
+    <div text-center class="header">Data-Editor</div>
 
     <ion-card-content>
       <form (ngSubmit)="addLine()">
         <ion-item>
-          <ion-input type="text" [(ngModel)]="newLine.text" name="text" id="text-input"></ion-input>
+          <ion-input type="text" [(ngModel)]="newLine.text" name="text" placeholder="Linecontent"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label>Zeile</ion-label>
-          <ion-select [(ngModel)]="newLine.line" name="line" required okText="Ok" cancelText="Abbrechen" placeholder="Zeile auswählen">
+          <ion-label>Line</ion-label>
+          <ion-select [(ngModel)]="newLine.line" name="line" required okText="Ok" cancelText="Abbrechen" placeholder="Select Line">
             <ion-option value="1">1</ion-option>
             <ion-option value="2">2</ion-option>
             <ion-option value="3">3</ion-option>
             <ion-option value="4">4</ion-option>
             <ion-option value="5">5</ion-option>
+            <ion-option value="6">6</ion-option>
+            <ion-option value="7">7</ion-option>
+            <ion-option value="8">8</ion-option>
           </ion-select>
         </ion-item>
-        <button ion-button type="submit" block>Zeile schreiben</button>
+        <button ion-button type="submit" block>Print line</button>
       </form>
     </ion-card-content>
-
-    <ion-card-content id="editor-content">
-      <canvas #canvas></canvas>
-    </ion-card-content>
-
   </ion-card>
 
-  <button ion-button block (click)="uploadData()">Übertragen</button>
+  <ion-card>
+    <div text-center class="header">Background-Color</div>
+    <ion-card-content>
+      <ion-row>
+        <ion-col *ngFor="let color of colors" [style.background]="color" class="color-block" tappable (click)="selectBackground(color)"></ion-col>
+      </ion-row>
+    </ion-card-content>
+    <div text-center></div>
+  </ion-card>
+
+  <ion-card>
+    <div text-center class="header">Font-Color</div>
+    <ion-card-content>
+      <ion-row>
+        <ion-col *ngFor="let color of colors" [style.background]="color" class="color-block" tappable (click)="selectColor(color)"></ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+
+  <div>
+    <canvas #canvas (touchstart)="startDrawing($event)" (touchmove)="moved($event)"></canvas>
+    <button ion-button block (click)="clearCanvas()">Reset Image</button>
+  </div>
+
+  <button ion-button block (click)="onUpload()">Send Image</button>
 
 </ion-content>

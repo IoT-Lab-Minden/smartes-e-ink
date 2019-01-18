@@ -1,31 +1,15 @@
-page-home {
-
-}
-
-#editor-content{
-  min-height: 50px;
-}
-
-ion-card{
+ion-content, .scroll-content, ion-card{
+  padding: 0;
   margin: 0;
-  text-align: left;
+  color: #ffffff;
 }
 
-#devices-content{
-  padding: 5px;
+canvas{
+  border: 1px solid #000000;
+  align-self: center;
 }
 
-.device{
-  padding: 5px;
+.color-block{
+  height: 20px;
 }
 
-.devices-header{
-  padding: 10px;
-  font-size: 12pt;
-}
-
-p{
-  padding: 5px 0 5px 0;
-  margin: 0;
-  width: 100%;
-}
