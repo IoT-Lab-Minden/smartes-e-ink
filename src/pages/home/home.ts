@@ -12,8 +12,15 @@ import {LoadingController} from 'ionic-angular';
 
 export class HomePage {
 
+  /**
+   * List of found devices
+   */
   devices: Array<any>;
 
+  /**
+   * Data of the connected device
+   * @type {{name: string; id: string; advertising: number[]; rssi: number; services: any[]; characteristics: any[]}}
+   */
   device = {
     'name': '',
     'id': '',
@@ -23,33 +30,74 @@ export class HomePage {
     'characteristics': []
   };
 
+  /**
+   * Shows if device is connected
+   * @type {boolean}
+   */
   connected = false;
 
+  /**
+   * Adress of service on bluetooth device
+   * @type {string}
+   */
   serviceUUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
 
+  /**
+   * Adress of characteristic on bluetooth device where image is send to
+   * @type {string}
+   */
   sendUUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
-  statusUUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 
-  deviceStatus = true;
-
+  /**
+   * Saves the lines that are written in the canvas
+   */
   lines: string[];
 
+  /**
+   * Saves what and where needs to be saved in lines next
+   * @type {{line: number; text: string}}
+   */
   newLine = {
     line: 0,
     text: ''
   }
 
+  /**
+   * X Position of Finger while drawing on canvas
+   */
   saveX: number;
+
+  /**
+   *  Y Position of Finger while drawing on canvas
+   */
   saveY: number;
 
+  /**
+   * Font Color
+   * @type {string}
+   */
   selectedColor = '#000000';
 
+  /**
+   * Background color of canvas
+   * @type {string}
+   */
   backgroundColor = '#ffffff';
 
+  /**
+   * Array filled with colors that can be selected
+   * @type {string[]}
+   */
   colors = ['#ffffff', '#C0C0C0', '#808080', '#000000'];
 
   @ViewChild('canvas') canvasEl: ElementRef;
+  /**
+   *
+   */
   private canvas: any;
+  /**
+   *
+   */
   private context: any;
 
 
@@ -57,6 +105,10 @@ export class HomePage {
               public  ble: BLE, private statusBar: StatusBar, private loading: LoadingController) {
   }
 
+
+  /**
+   * Called when smartphones opens app. Initializes Status Bar and scans for 2 seconds for devices
+   */
   ionViewDidLoad() {
 
     this.statusBar.overlaysWebView(true);
@@ -66,7 +118,14 @@ export class HomePage {
     this.devices = new Array<any>(0);
     this.ble.scan([], 2).subscribe(
       device => this.onDeviceDiscovered(device),
-      error => this.showBluetoothError()
+      error => {
+        let alert = this.alertCtrl.create({
+          title: 'Error while scanning',
+          subTitle: error,
+          buttons: ['Ok']
+        });
+        alert.present();
+      }
     );
 
     this.initLines();
@@ -78,6 +137,9 @@ export class HomePage {
     this.initialiseCanvas();
   }
 
+  /**
+   * Initializes lines Array
+   */
   initLines() {
     this.lines = Array(7);
     for (let i = 0; i < this.lines.length; i++) {
@@ -85,6 +147,9 @@ export class HomePage {
     }
   }
 
+  /**
+   * Initialize canvas with selected background color and size 400x300
+   */
   initialiseCanvas() {
     if (this.canvas.getContext) {
       this.context = this.canvas.getContext('2d');
@@ -93,11 +158,17 @@ export class HomePage {
     }
   }
 
+  /**
+   * Clears the canvas with the selected background color
+   */
   clearCanvas() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.initialiseCanvas();
   }
 
+  /**
+   * Adds newline.text to position newLine.line in the lines array
+   */
   addLine() {
     if (this.newLine.line <= this.lines.length) {
       this.lines[this.newLine.line - 1] = this.newLine.text;
@@ -105,6 +176,9 @@ export class HomePage {
     this.drawText();
   }
 
+  /**
+   * Draws the content of lines on the canvas
+   */
   drawText() {
     this.clearCanvas();
     this.context.fillStyle = this.selectedColor;
@@ -115,15 +189,27 @@ export class HomePage {
     }
   }
 
+  /**
+   * Changes the selected font color
+   * @param color
+   */
   selectColor(color) {
     this.selectedColor = color;
   }
 
+  /**
+   * Changes teh selected background color and resets canvas
+   * @param color
+   */
   selectBackground(color) {
     this.backgroundColor = color;
     this.clearCanvas();
   }
 
+  /**
+   * Saves finger position on canvas in saveX and saveY
+   * @param ev touch event on canvas
+   */
   startDrawing(ev) {
     var canvasPosition = this.canvas.getBoundingClientRect();
 
@@ -131,6 +217,10 @@ export class HomePage {
     this.saveY = ev.touches[0].pageY - canvasPosition.y;
   }
 
+  /**
+   * Draws a line when moved over the canvas
+   * @param ev touch event on canvas
+   */
   moved(ev) {
     var canvasPosition = this.canvas.getBoundingClientRect();
 
@@ -153,42 +243,61 @@ export class HomePage {
     this.saveY = currentY;
   }
 
+  /**
+   * Scans for 2 seconds for devices
+   * @param refresher refresher ui element
+   */
   doRefresh(refresher) {
     this.devices = new Array<any>(0);
     this.ble.scan([], 2).subscribe(
       device => this.onDeviceDiscovered(device),
-      error => this.showBluetoothError()
+      error => {
+        let alert = this.alertCtrl.create({
+          title: 'Error while scanning',
+          subTitle: error,
+          buttons: ['Ok']
+        });
+        alert.present();
+      }
     );
     setTimeout(() => {
       refresher.complete();
     }, 2000);
   }
 
+  /**
+   * Saves the found device in devices
+   * @param device found device
+   */
   onDeviceDiscovered(device) {
     if (device.name != null) {
       this.devices.push(device);
     }
   }
 
+  /**
+   * Shows a dialog to connect or disconnect from a device
+   * @param device device to connect or disconnect
+   */
   showConnectDeviceDialog(device) {
     let actionSheet = this.actionSheetCtrl.create({
       title: device.name,
       buttons: [
         {
-          text: 'Verbinden',
+          text: 'Connect',
           handler: () => {
             this.connect(device);
           }
         },
         {
-          text: 'Trennen',
+          text: 'Disconnect',
           handler: () => {
             this.disconnect(device);
           }
 
         },
         {
-          text: 'Abbrechen',
+          text: 'Cancel',
           role: 'cancel',
           handler: () => {
 
@@ -200,21 +309,38 @@ export class HomePage {
     actionSheet.present();
   }
 
+  /**
+   * Connects to the given device
+   * @param device device to connect to
+   */
   connect(device) {
     console.log(device.id);
     this.ble.connect(device.id).subscribe(
       peripheral => this.onConnected(peripheral),
-      error => console.log(error)
+      error => {
+        let alert = this.alertCtrl.create({
+          title: 'Error while Connecting',
+          subTitle: error,
+          buttons: ['Ok']
+        });
+        alert.present();
+      }
     );
   }
 
+  /**
+   * Saves the connected device in device
+   * @param peripheral connected device
+   */
   onConnected(peripheral) {
-    console.log("verbunden");
-    //console.log(peripheral);
     this.device = peripheral;
     this.connected = true;
   }
 
+  /**
+   * Disconnects from the connected device and saves in device dummy values
+   * @param device connected device
+   */
   disconnect(device) {
     this.ble.disconnect(device.id).then(res => {
       this.connected = false;
@@ -227,123 +353,91 @@ export class HomePage {
         'characteristics': []
       };
     }).catch(err => {
-      this.showDisconnectError()
+
     })
   }
 
+  /**
+   * Sends the image via ble to the connected device. The image is mirrored and only 80 pixels are send at once.
+   */
   sendImage() {
     let imageData = this.context.getImageData(0, 0, 400, 300);
     let data = imageData.data;
-    let error = false;
+    let start = 1600;
+    let end = 3;
     let i = 0;
-    let t = 0;
-    while(i < data.length){
-      let sendingData = "";
-      for (let j = 0; j < 20 && i < data.length; i = i + 16, j++) {
-        t++;
-        let block = new Uint8Array(4);
-        for (let k = 0; k < 4; k++) {
-          let gray = ((data[i] + data[i + 1] + data[i + 2]) / 3);
-          if (gray == 0) {
-            imageData.data[i] = 0;
-            imageData.data[i+1] = 0;
-            imageData.data[i+2] = 0;
-            block[k] = 3;
-          } else if (gray == 128) {
-            imageData.data[i] = 128;
-            imageData.data[i+1] = 128;
-            imageData.data[i+2] = 128;
-            block[k] = 2;
-          } else if (gray == 192) {
-            imageData.data[i] = 192;
-            imageData.data[i+1] = 192;
-            imageData.data[i+2] = 192;
-            block[k] = 1;
-          } else if(gray == 255){
-            imageData.data[i] = 255;
-            imageData.data[i+1] = 255;
-            imageData.data[i+2] = 255;
-            block[k] = 0;
-          } else {
-            imageData.data[i] = 0;
-            imageData.data[i+1] = 0;
-            imageData.data[i+2] = 0;
-            block[k] = 3;
+    for (let row = 0; row < 300; row++, start += 1600, end += 1600) {
+      i = start;
+      for (let blocks = 0; blocks < 5; blocks++) {
+        let sendingData = "";
+        for (let b = 0; b < 20; b++) {
+          let block = new Uint8Array(4);
+          for (let pixel = 0; pixel < 4; pixel++, i = i - 4) {
+            let gray = data[i];
+            if (gray == 0) {
+              block[pixel] = 3;
+            } else if (gray == 128) {
+              block[pixel] = 2;
+            } else if (gray == 192) {
+              block[pixel] = 1;
+            } else if (gray == 255) {
+              block[pixel] = 0;
+            } else {
+              block[pixel] = 3;
+            }
           }
+          let pixelBlock = (block[0] + (block[1] * 4) + (block[2] * 16) + (block[3] * 64)).toString();
+          while (pixelBlock.length < 3) {
+            pixelBlock = 0 + "" + pixelBlock;
+          }
+          sendingData += pixelBlock;
         }
-        let pixelBlock = (block[0] + (block[1] * 4) + (block[2] * 16) + (block[3] * 64)).toString();
-        while (pixelBlock.length < 3) {
-          pixelBlock = 0 + "" + pixelBlock;
-        }
-        sendingData += pixelBlock;
-      }
-
-      this.ble.write(this.device.id, this.serviceUUID, this.sendUUID, this.stringToBytes(sendingData)).catch(err => {
-        let alert = this.alertCtrl.create({
-          title: 'Fehler beim Übertragen',
-          subTitle: err,
-          buttons: ['Ok']
+        this.ble.write(this.device.id, this.serviceUUID, this.sendUUID, this.stringToBytes(sendingData)).catch(err => {
+          let alert = this.alertCtrl.create({
+            title: 'Fehler beim Übertragen',
+            subTitle: err,
+            buttons: ['Ok']
+          });
+          alert.present();
         });
-        alert.present();
-        error = true;
-      });
 
-      let currentTime = new Date().getTime();
-      while (currentTime + 500 >= new Date().getTime()) {
+        let currentTime = new Date().getTime();
+        while (currentTime + 500 >= new Date().getTime()) {
+        }
       }
     }
-    this.context.putImageData(imageData, 0, 0);
-    console.log(t);
   }
 
+    /**
+     * Shows a loading screen and calls the send image function.
+     */
+    onUpload()
+    {
+      const loader = this.loading.create({
+        content: "Sending Data..."
+      });
+      loader.present();
 
-  onUpload() {
-    const loader = this.loading.create({
-      content: "Sende Daten..."
-    });
-    loader.present();
+      this.sendImage();
 
-    this.sendImage();
-
-    loader.dismiss();
-  }
-
-  stringToBytes(string) {
-    let array = new Uint8Array(string.length);
-    for (let i = 0, l = string.length; i < l; i++) {
-      array[i] = string.charCodeAt(i);
+      loader.dismiss();
     }
-    return array.buffer;
+
+    /**
+     * Converts a string into a byte array.
+     * @param string string that needs to be converted
+     * @returns {ArrayBufferLike}
+     */
+    stringToBytes(string)
+    {
+      let array = new Uint8Array(string.length);
+      for (let i = 0, l = string.length; i < l; i++) {
+        array[i] = string.charCodeAt(i);
+      }
+      return array.buffer;
+    }
+
+
   }
-
-  showBluetoothError() {
-    let alert = this.alertCtrl.create({
-      title: 'Fehler beim Scannen',
-      subTitle: 'Beim Scannen ist ein Fehler aufgetreten!',
-      buttons: ['Ok.']
-    });
-    alert.present();
-  }
-
-  showDisconnectError() {
-    let alert = this.alertCtrl.create({
-      title: 'Fehler beim Trennen',
-      subTitle: 'Es konnte sich nicht vom Gerät getrennt werden!',
-      buttons: ['Ok.']
-    });
-    alert.present();
-  }
-
-  showNoConnectionError() {
-    let alert = this.alertCtrl.create({
-      title: 'Keine Verbindung',
-      subTitle: 'Verbinde dich erst mit einem Gerät, um Daten zu übertragen!',
-      buttons: ['Ok.']
-    });
-    alert.present();
-  }
-
-
-}
 
 
