@@ -1,0 +1,115 @@
+<html>
+<head>
+<title>home.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(232,191,106); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(186,186,186); }
+.s3 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+home.html</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&lt;ion-header&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;ion-navbar&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;ion-title </span><span class="s2">text-center</span><span class="s0">&gt;</span><span class="s1"> 
+      E-Ink-Connect 
+    </span><span class="s0">&lt;/ion-title&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;/ion-navbar&gt;</span><span class="s1"> 
+</span><span class="s0">&lt;/ion-header&gt;</span><span class="s1"> 
+ 
+</span><span class="s0">&lt;ion-content&gt;</span><span class="s1"> 
+ 
+  </span><span class="s0">&lt;ion-refresher </span><span class="s2">(ionRefresh)=</span><span class="s3">&quot;doRefresh($event)&quot;</span><span class="s0">&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;ion-refresher-content 
+      </span><span class="s2">pullingIcon=</span><span class="s3">&quot;arrow-dropdown&quot;</span><span class="s0"> 
+      </span><span class="s2">pullingText=</span><span class="s3">&quot;Pull down to scan&quot;</span><span class="s0"> 
+      </span><span class="s2">refreshingSpinner=</span><span class="s3">&quot;circles&quot;</span><span class="s0"> 
+      </span><span class="s2">refreshingText=</span><span class="s3">&quot;Scanning...&quot;</span><span class="s0">&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;/ion-refresher-content&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;/ion-refresher&gt;</span><span class="s1"> 
+ 
+  </span><span class="s0">&lt;ion-card&gt;</span><span class="s1"> 
+   </span><span class="s0">&lt;div </span><span class="s2">text-center class=</span><span class="s3">&quot;title&quot;</span><span class="s0">&gt;</span><span class="s1">Found Devices</span><span class="s0">&lt;/div&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;ion-card-content&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;ion-card </span><span class="s2">(click)=</span><span class="s3">&quot;showConnectDeviceDialog(d)&quot; </span><span class="s2">*ngFor=</span><span class="s3">&quot;let d of devices&quot;</span><span class="s0">&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;ion-row&gt;</span><span class="s1"> 
+          </span><span class="s0">&lt;ion-col&gt;</span><span class="s1"> 
+            {{d.name}} 
+          </span><span class="s0">&lt;/ion-col&gt;</span><span class="s1"> 
+          </span><span class="s0">&lt;ion-col&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-icon </span><span class="s2">name=</span><span class="s3">&quot;checkmark&quot; </span><span class="s2">*ngIf=</span><span class="s3">&quot;d.id == device.id&quot;</span><span class="s0">&gt;&lt;/ion-icon&gt;</span><span class="s1"> 
+          </span><span class="s0">&lt;/ion-col&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;/ion-row&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;ion-row&gt;</span><span class="s1"> 
+          {{d.id}} 
+        </span><span class="s0">&lt;/ion-row&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;/ion-card&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;/ion-card-content&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;div </span><span class="s2">text-center</span><span class="s0">&gt;</span><span class="s1">Make sure that bluetooth is enabled.</span><span class="s0">&lt;/div&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;/ion-card&gt;</span><span class="s1"> 
+ 
+  </span><span class="s0">&lt;ion-card&gt;</span><span class="s1"> 
+ 
+    </span><span class="s0">&lt;div </span><span class="s2">text-center class=</span><span class="s3">&quot;header&quot;</span><span class="s0">&gt;</span><span class="s1">Data-Editor</span><span class="s0">&lt;/div&gt;</span><span class="s1"> 
+ 
+    </span><span class="s0">&lt;ion-card-content&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;form </span><span class="s2">(ngSubmit)=</span><span class="s3">&quot;addLine()&quot;</span><span class="s0">&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;ion-item&gt;</span><span class="s1"> 
+          </span><span class="s0">&lt;ion-input </span><span class="s2">type=</span><span class="s3">&quot;text&quot; </span><span class="s2">[(ngModel)]=</span><span class="s3">&quot;newLine.text&quot; </span><span class="s2">name=</span><span class="s3">&quot;text&quot; </span><span class="s2">placeholder=</span><span class="s3">&quot;Linecontent&quot;</span><span class="s0">&gt;&lt;/ion-input&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;/ion-item&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;ion-item&gt;</span><span class="s1"> 
+          </span><span class="s0">&lt;ion-label&gt;</span><span class="s1">Line</span><span class="s0">&lt;/ion-label&gt;</span><span class="s1"> 
+          </span><span class="s0">&lt;ion-select </span><span class="s2">[(ngModel)]=</span><span class="s3">&quot;newLine.line&quot; </span><span class="s2">name=</span><span class="s3">&quot;line&quot; </span><span class="s2">required okText=</span><span class="s3">&quot;Ok&quot; </span><span class="s2">cancelText=</span><span class="s3">&quot;Abbrechen&quot; </span><span class="s2">placeholder=</span><span class="s3">&quot;Select Line&quot;</span><span class="s0">&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;1&quot;</span><span class="s0">&gt;</span><span class="s1">1</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;2&quot;</span><span class="s0">&gt;</span><span class="s1">2</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;3&quot;</span><span class="s0">&gt;</span><span class="s1">3</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;4&quot;</span><span class="s0">&gt;</span><span class="s1">4</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;5&quot;</span><span class="s0">&gt;</span><span class="s1">5</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;6&quot;</span><span class="s0">&gt;</span><span class="s1">6</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;7&quot;</span><span class="s0">&gt;</span><span class="s1">7</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+            </span><span class="s0">&lt;ion-option </span><span class="s2">value=</span><span class="s3">&quot;8&quot;</span><span class="s0">&gt;</span><span class="s1">8</span><span class="s0">&lt;/ion-option&gt;</span><span class="s1"> 
+          </span><span class="s0">&lt;/ion-select&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;/ion-item&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;button </span><span class="s2">ion-button type=</span><span class="s3">&quot;submit&quot; </span><span class="s2">block</span><span class="s0">&gt;</span><span class="s1">Print line</span><span class="s0">&lt;/button&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;/form&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;/ion-card-content&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;/ion-card&gt;</span><span class="s1"> 
+ 
+  </span><span class="s0">&lt;ion-card&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;div </span><span class="s2">text-center class=</span><span class="s3">&quot;header&quot;</span><span class="s0">&gt;</span><span class="s1">Background-Color</span><span class="s0">&lt;/div&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;ion-card-content&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;ion-row&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;ion-col </span><span class="s2">*ngFor=</span><span class="s3">&quot;let color of colors&quot; </span><span class="s2">[style.background]=</span><span class="s3">&quot;color&quot; </span><span class="s2">class=</span><span class="s3">&quot;color-block&quot; </span><span class="s2">tappable (click)=</span><span class="s3">&quot;selectBackground(color)&quot;</span><span class="s0">&gt;&lt;/ion-col&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;/ion-row&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;/ion-card-content&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;div </span><span class="s2">text-center</span><span class="s0">&gt;&lt;/div&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;/ion-card&gt;</span><span class="s1"> 
+ 
+  </span><span class="s0">&lt;ion-card&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;div </span><span class="s2">text-center class=</span><span class="s3">&quot;header&quot;</span><span class="s0">&gt;</span><span class="s1">Font-Color</span><span class="s0">&lt;/div&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;ion-card-content&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;ion-row&gt;</span><span class="s1"> 
+        </span><span class="s0">&lt;ion-col </span><span class="s2">*ngFor=</span><span class="s3">&quot;let color of colors&quot; </span><span class="s2">[style.background]=</span><span class="s3">&quot;color&quot; </span><span class="s2">class=</span><span class="s3">&quot;color-block&quot; </span><span class="s2">tappable (click)=</span><span class="s3">&quot;selectColor(color)&quot;</span><span class="s0">&gt;&lt;/ion-col&gt;</span><span class="s1"> 
+      </span><span class="s0">&lt;/ion-row&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;/ion-card-content&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;/ion-card&gt;</span><span class="s1"> 
+ 
+  </span><span class="s0">&lt;div&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;canvas </span><span class="s2">#canvas (touchstart)=</span><span class="s3">&quot;startDrawing($event)&quot; </span><span class="s2">(touchmove)=</span><span class="s3">&quot;moved($event)&quot;</span><span class="s0">&gt;&lt;/canvas&gt;</span><span class="s1"> 
+    </span><span class="s0">&lt;button </span><span class="s2">ion-button block (click)=</span><span class="s3">&quot;clearCanvas()&quot;</span><span class="s0">&gt;</span><span class="s1">Reset Image</span><span class="s0">&lt;/button&gt;</span><span class="s1"> 
+  </span><span class="s0">&lt;/div&gt;</span><span class="s1"> 
+ 
+  </span><span class="s0">&lt;button </span><span class="s2">ion-button block (click)=</span><span class="s3">&quot;onUpload()&quot;</span><span class="s0">&gt;</span><span class="s1">Send Image</span><span class="s0">&lt;/button&gt;</span><span class="s1"> 
+ 
+</span><span class="s0">&lt;/ion-content&gt;</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

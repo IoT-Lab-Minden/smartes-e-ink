@@ -1,0 +1,468 @@
+<html>
+<head>
+<title>home.ts</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); font-weight: bold; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(98,151,85); font-weight: bold; font-style: italic; }
+.s6 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+home.ts</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">{Component</span><span class="s2">, </span><span class="s1">ElementRef</span><span class="s2">, </span><span class="s1">ViewChild} from </span><span class="s3">'@angular/core'</span><span class="s2">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">{NavController</span><span class="s2">, </span><span class="s1">ActionSheetController</span><span class="s2">, </span><span class="s1">AlertController} from </span><span class="s3">'ionic-angular'</span><span class="s2">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">{StatusBar} from </span><span class="s3">'@ionic-native/status-bar'</span><span class="s2">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">{BLE} from </span><span class="s3">'@ionic-native/ble'</span><span class="s2">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">{LoadingController} from </span><span class="s3">'ionic-angular'</span><span class="s2">;</span><span class="s1"> 
+ 
+@Component({ 
+  selector: </span><span class="s3">'page-home'</span><span class="s2">,</span><span class="s1"> 
+  templateUrl: </span><span class="s3">'home.html'</span><span class="s2">,</span><span class="s1"> 
+  providers: [BLE] 
+}) 
+ 
+</span><span class="s0">export class </span><span class="s1">HomePage { 
+ 
+  </span><span class="s4">/** 
+   * List of found devices 
+   */</span><span class="s1"> 
+  devices: Array&lt;any&gt;</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Data of the connected device 
+   * </span><span class="s5">@type </span><span class="s4">{{name: string; id: string; advertising: number[]; rssi: number; services: any[]; characteristics: any[]}} 
+   */</span><span class="s1"> 
+  device = { 
+    </span><span class="s3">'name'</span><span class="s1">: </span><span class="s3">''</span><span class="s2">,</span><span class="s1"> 
+    </span><span class="s3">'id'</span><span class="s1">: </span><span class="s3">''</span><span class="s2">,</span><span class="s1"> 
+    </span><span class="s3">'advertising'</span><span class="s1">: [</span><span class="s6">2</span><span class="s2">, </span><span class="s6">1</span><span class="s2">, </span><span class="s6">6</span><span class="s2">, </span><span class="s6">3</span><span class="s2">, </span><span class="s6">3</span><span class="s2">, </span><span class="s6">15</span><span class="s2">, </span><span class="s6">24</span><span class="s2">, </span><span class="s6">8</span><span class="s2">, </span><span class="s6">9</span><span class="s2">, </span><span class="s6">66</span><span class="s2">, </span><span class="s6">97</span><span class="s2">, </span><span class="s6">116</span><span class="s2">, </span><span class="s6">116</span><span class="s2">, </span><span class="s6">101</span><span class="s2">, </span><span class="s6">114</span><span class="s2">, </span><span class="s6">121</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+    </span><span class="s3">'rssi'</span><span class="s1">: -</span><span class="s6">55</span><span class="s2">,</span><span class="s1"> 
+    </span><span class="s3">'services'</span><span class="s1">: []</span><span class="s2">,</span><span class="s1"> 
+    </span><span class="s3">'characteristics'</span><span class="s1">: [] 
+  }</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Shows if device is connected 
+   * </span><span class="s5">@type </span><span class="s4">{boolean} 
+   */</span><span class="s1"> 
+  connected = </span><span class="s0">false</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Adress of service on bluetooth device 
+   * </span><span class="s5">@type </span><span class="s4">{string} 
+   */</span><span class="s1"> 
+  serviceUUID = </span><span class="s3">&quot;6E400001-B5A3-F393-E0A9-E50E24DCCA9E&quot;</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Adress of characteristic on bluetooth device where image is send to 
+   * </span><span class="s5">@type </span><span class="s4">{string} 
+   */</span><span class="s1"> 
+  sendUUID = </span><span class="s3">&quot;6E400002-B5A3-F393-E0A9-E50E24DCCA9E&quot;</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Saves the lines that are written in the canvas 
+   */</span><span class="s1"> 
+  lines: string[]</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Saves what and where needs to be saved in lines next 
+   * </span><span class="s5">@type </span><span class="s4">{{line: number; text: string}} 
+   */</span><span class="s1"> 
+  newLine = { 
+    line: </span><span class="s6">0</span><span class="s2">,</span><span class="s1"> 
+    text: </span><span class="s3">''</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * X Position of Finger while drawing on canvas 
+   */</span><span class="s1"> 
+  saveX: number</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   *  Y Position of Finger while drawing on canvas 
+   */</span><span class="s1"> 
+  saveY: number</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Font Color 
+   * </span><span class="s5">@type </span><span class="s4">{string} 
+   */</span><span class="s1"> 
+  selectedColor = </span><span class="s3">'#000000'</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Background color of canvas 
+   * </span><span class="s5">@type </span><span class="s4">{string} 
+   */</span><span class="s1"> 
+  backgroundColor = </span><span class="s3">'#ffffff'</span><span class="s2">;</span><span class="s1"> 
+ 
+  </span><span class="s4">/** 
+   * Array filled with colors that can be selected 
+   * </span><span class="s5">@type </span><span class="s4">{string[]} 
+   */</span><span class="s1"> 
+  colors = [</span><span class="s3">'#ffffff'</span><span class="s2">, </span><span class="s3">'#C0C0C0'</span><span class="s2">, </span><span class="s3">'#808080'</span><span class="s2">, </span><span class="s3">'#000000'</span><span class="s1">]</span><span class="s2">;</span><span class="s1"> 
+ 
+  @ViewChild(</span><span class="s3">'canvas'</span><span class="s1">) canvasEl: ElementRef</span><span class="s2">;</span><span class="s1"> 
+  </span><span class="s4">/** 
+   * 
+   */</span><span class="s1"> 
+  </span><span class="s0">private </span><span class="s1">canvas: any</span><span class="s2">;</span><span class="s1"> 
+  </span><span class="s4">/** 
+   * 
+   */</span><span class="s1"> 
+  </span><span class="s0">private </span><span class="s1">context: any</span><span class="s2">;</span><span class="s1"> 
+ 
+ 
+  constructor(</span><span class="s0">public </span><span class="s1">navCtrl: NavController</span><span class="s2">, </span><span class="s0">public </span><span class="s1">alertCtrl: AlertController</span><span class="s2">, </span><span class="s0">public </span><span class="s1">actionSheetCtrl: ActionSheetController</span><span class="s2">,</span><span class="s1"> 
+              </span><span class="s0">public  </span><span class="s1">ble: BLE</span><span class="s2">, </span><span class="s0">private </span><span class="s1">statusBar: StatusBar</span><span class="s2">, </span><span class="s0">private </span><span class="s1">loading: LoadingController) { 
+  } 
+ 
+ 
+  </span><span class="s4">/** 
+   * Called when smartphones opens app. Initializes Status Bar and scans for 2 seconds for devices 
+   */</span><span class="s1"> 
+  ionViewDidLoad() { 
+ 
+    </span><span class="s0">this</span><span class="s1">.statusBar.overlaysWebView(</span><span class="s0">true</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.statusBar.styleBlackTranslucent()</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.statusBar.backgroundColorByHexString(</span><span class="s3">'#ffffff'</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">this</span><span class="s1">.devices = </span><span class="s0">new </span><span class="s1">Array&lt;any&gt;(</span><span class="s6">0</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.ble.scan([]</span><span class="s2">, </span><span class="s6">2</span><span class="s1">).subscribe( 
+      device =&gt; </span><span class="s0">this</span><span class="s1">.onDeviceDiscovered(device)</span><span class="s2">,</span><span class="s1"> 
+      error =&gt; { 
+        </span><span class="s0">let </span><span class="s1">alert = </span><span class="s0">this</span><span class="s1">.alertCtrl.create({ 
+          title: </span><span class="s3">'Error while scanning'</span><span class="s2">,</span><span class="s1"> 
+          subTitle: error</span><span class="s2">,</span><span class="s1"> 
+          buttons: [</span><span class="s3">'Ok'</span><span class="s1">] 
+        })</span><span class="s2">;</span><span class="s1"> 
+        alert.present()</span><span class="s2">;</span><span class="s1"> 
+      } 
+    )</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">this</span><span class="s1">.initLines()</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">this</span><span class="s1">.canvas = </span><span class="s0">this</span><span class="s1">.canvasEl.nativeElement</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.canvas.width = </span><span class="s6">400</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.canvas.height = </span><span class="s6">300</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">this</span><span class="s1">.initialiseCanvas()</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Initializes lines Array 
+   */</span><span class="s1"> 
+  initLines() { 
+    </span><span class="s0">this</span><span class="s1">.lines = Array(</span><span class="s6">7</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">for </span><span class="s1">(</span><span class="s0">let </span><span class="s1">i = </span><span class="s6">0</span><span class="s2">; </span><span class="s1">i &lt; </span><span class="s0">this</span><span class="s1">.lines.length</span><span class="s2">; </span><span class="s1">i++) { 
+      </span><span class="s0">this</span><span class="s1">.lines[i] = </span><span class="s3">&quot;&quot;</span><span class="s2">;</span><span class="s1"> 
+    } 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Initialize canvas with selected background color and size 400x300 
+   */</span><span class="s1"> 
+  initialiseCanvas() { 
+    </span><span class="s0">if </span><span class="s1">(</span><span class="s0">this</span><span class="s1">.canvas.getContext) { 
+      </span><span class="s0">this</span><span class="s1">.context = </span><span class="s0">this</span><span class="s1">.canvas.getContext(</span><span class="s3">'2d'</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+      </span><span class="s0">this</span><span class="s1">.context.fillStyle = </span><span class="s0">this</span><span class="s1">.backgroundColor</span><span class="s2">;</span><span class="s1"> 
+      </span><span class="s0">this</span><span class="s1">.context.fillRect(</span><span class="s6">0</span><span class="s2">, </span><span class="s6">0</span><span class="s2">, </span><span class="s6">400</span><span class="s2">, </span><span class="s6">300</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+    } 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Clears the canvas with the selected background color 
+   */</span><span class="s1"> 
+  clearCanvas() { 
+    </span><span class="s0">this</span><span class="s1">.context.clearRect(</span><span class="s6">0</span><span class="s2">, </span><span class="s6">0</span><span class="s2">, </span><span class="s0">this</span><span class="s1">.canvas.width</span><span class="s2">, </span><span class="s0">this</span><span class="s1">.canvas.height)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.initialiseCanvas()</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Adds newline.text to position newLine.line in the lines array 
+   */</span><span class="s1"> 
+  addLine() { 
+    </span><span class="s0">if </span><span class="s1">(</span><span class="s0">this</span><span class="s1">.newLine.line &lt;= </span><span class="s0">this</span><span class="s1">.lines.length) { 
+      </span><span class="s0">this</span><span class="s1">.lines[</span><span class="s0">this</span><span class="s1">.newLine.line - </span><span class="s6">1</span><span class="s1">] = </span><span class="s0">this</span><span class="s1">.newLine.text</span><span class="s2">;</span><span class="s1"> 
+    } 
+    </span><span class="s0">this</span><span class="s1">.drawText()</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Draws the content of lines on the canvas 
+   */</span><span class="s1"> 
+  drawText() { 
+    </span><span class="s0">this</span><span class="s1">.clearCanvas()</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.context.fillStyle = </span><span class="s0">this</span><span class="s1">.selectedColor</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.context.font = </span><span class="s3">'30px Arial'</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">for </span><span class="s1">(</span><span class="s0">let </span><span class="s1">i = </span><span class="s6">0</span><span class="s2">; </span><span class="s1">i &lt; </span><span class="s0">this</span><span class="s1">.lines.length</span><span class="s2">; </span><span class="s1">i++) { 
+      </span><span class="s0">this</span><span class="s1">.context.fillText(</span><span class="s0">this</span><span class="s1">.lines[i]</span><span class="s2">, </span><span class="s6">5</span><span class="s2">, </span><span class="s6">10 </span><span class="s1">+ (</span><span class="s6">35 </span><span class="s1">* i))</span><span class="s2">;</span><span class="s1"> 
+    } 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Changes the selected font color 
+   * </span><span class="s5">@param </span><span class="s4">color 
+   */</span><span class="s1"> 
+  selectColor(color) { 
+    </span><span class="s0">this</span><span class="s1">.selectedColor = color</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Changes teh selected background color and resets canvas 
+   * </span><span class="s5">@param </span><span class="s4">color 
+   */</span><span class="s1"> 
+  selectBackground(color) { 
+    </span><span class="s0">this</span><span class="s1">.backgroundColor = color</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.clearCanvas()</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Saves finger position on canvas in saveX and saveY 
+   * </span><span class="s5">@param </span><span class="s4">ev touch event on canvas 
+   */</span><span class="s1"> 
+  startDrawing(ev) { 
+    </span><span class="s0">var </span><span class="s1">canvasPosition = </span><span class="s0">this</span><span class="s1">.canvas.getBoundingClientRect()</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">this</span><span class="s1">.saveX = ev.touches[</span><span class="s6">0</span><span class="s1">].pageX - canvasPosition.x</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.saveY = ev.touches[</span><span class="s6">0</span><span class="s1">].pageY - canvasPosition.y</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Draws a line when moved over the canvas 
+   * </span><span class="s5">@param </span><span class="s4">ev touch event on canvas 
+   */</span><span class="s1"> 
+  moved(ev) { 
+    </span><span class="s0">var </span><span class="s1">canvasPosition = </span><span class="s0">this</span><span class="s1">.canvas.getBoundingClientRect()</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">let </span><span class="s1">ctx = </span><span class="s0">this</span><span class="s1">.canvas.getContext(</span><span class="s3">'2d'</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">let </span><span class="s1">currentX = ev.touches[</span><span class="s6">0</span><span class="s1">].pageX - canvasPosition.x</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">let </span><span class="s1">currentY = ev.touches[</span><span class="s6">0</span><span class="s1">].pageY - canvasPosition.y</span><span class="s2">;</span><span class="s1"> 
+ 
+    ctx.lineJoin = </span><span class="s3">'round'</span><span class="s2">;</span><span class="s1"> 
+    ctx.strokeStyle = </span><span class="s0">this</span><span class="s1">.selectedColor</span><span class="s2">;</span><span class="s1"> 
+    ctx.lineWidth = </span><span class="s6">5</span><span class="s2">;</span><span class="s1"> 
+ 
+    ctx.beginPath()</span><span class="s2">;</span><span class="s1"> 
+    ctx.moveTo(</span><span class="s0">this</span><span class="s1">.saveX</span><span class="s2">, </span><span class="s0">this</span><span class="s1">.saveY)</span><span class="s2">;</span><span class="s1"> 
+    ctx.lineTo(currentX</span><span class="s2">, </span><span class="s1">currentY)</span><span class="s2">;</span><span class="s1"> 
+    ctx.closePath()</span><span class="s2">;</span><span class="s1"> 
+ 
+    ctx.stroke()</span><span class="s2">;</span><span class="s1"> 
+ 
+    </span><span class="s0">this</span><span class="s1">.saveX = currentX</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.saveY = currentY</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Scans for 2 seconds for devices 
+   * </span><span class="s5">@param </span><span class="s4">refresher refresher ui element 
+   */</span><span class="s1"> 
+  doRefresh(refresher) { 
+    </span><span class="s0">this</span><span class="s1">.devices = </span><span class="s0">new </span><span class="s1">Array&lt;any&gt;(</span><span class="s6">0</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.ble.scan([]</span><span class="s2">, </span><span class="s6">2</span><span class="s1">).subscribe( 
+      device =&gt; </span><span class="s0">this</span><span class="s1">.onDeviceDiscovered(device)</span><span class="s2">,</span><span class="s1"> 
+      error =&gt; { 
+        </span><span class="s0">let </span><span class="s1">alert = </span><span class="s0">this</span><span class="s1">.alertCtrl.create({ 
+          title: </span><span class="s3">'Error while scanning'</span><span class="s2">,</span><span class="s1"> 
+          subTitle: error</span><span class="s2">,</span><span class="s1"> 
+          buttons: [</span><span class="s3">'Ok'</span><span class="s1">] 
+        })</span><span class="s2">;</span><span class="s1"> 
+        alert.present()</span><span class="s2">;</span><span class="s1"> 
+      } 
+    )</span><span class="s2">;</span><span class="s1"> 
+    setTimeout(() =&gt; { 
+      refresher.complete()</span><span class="s2">;</span><span class="s1"> 
+    }</span><span class="s2">, </span><span class="s6">2000</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Saves the found device in devices 
+   * </span><span class="s5">@param </span><span class="s4">device found device 
+   */</span><span class="s1"> 
+  onDeviceDiscovered(device) { 
+    </span><span class="s0">if </span><span class="s1">(device.name != </span><span class="s0">null</span><span class="s1">) { 
+      </span><span class="s0">this</span><span class="s1">.devices.push(device)</span><span class="s2">;</span><span class="s1"> 
+    } 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Shows a dialog to connect or disconnect from a device 
+   * </span><span class="s5">@param </span><span class="s4">device device to connect or disconnect 
+   */</span><span class="s1"> 
+  showConnectDeviceDialog(device) { 
+    </span><span class="s0">let </span><span class="s1">actionSheet = </span><span class="s0">this</span><span class="s1">.actionSheetCtrl.create({ 
+      title: device.name</span><span class="s2">,</span><span class="s1"> 
+      buttons: [ 
+        { 
+          text: </span><span class="s3">'Connect'</span><span class="s2">,</span><span class="s1"> 
+          handler: () =&gt; { 
+            </span><span class="s0">this</span><span class="s1">.connect(device)</span><span class="s2">;</span><span class="s1"> 
+          } 
+        }</span><span class="s2">,</span><span class="s1"> 
+        { 
+          text: </span><span class="s3">'Disconnect'</span><span class="s2">,</span><span class="s1"> 
+          handler: () =&gt; { 
+            </span><span class="s0">this</span><span class="s1">.disconnect(device)</span><span class="s2">;</span><span class="s1"> 
+          } 
+ 
+        }</span><span class="s2">,</span><span class="s1"> 
+        { 
+          text: </span><span class="s3">'Cancel'</span><span class="s2">,</span><span class="s1"> 
+          role: </span><span class="s3">'cancel'</span><span class="s2">,</span><span class="s1"> 
+          handler: () =&gt; { 
+ 
+          } 
+        } 
+      ] 
+    })</span><span class="s2">;</span><span class="s1"> 
+ 
+    actionSheet.present()</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Connects to the given device 
+   * </span><span class="s5">@param </span><span class="s4">device device to connect to 
+   */</span><span class="s1"> 
+  connect(device) { 
+    console.log(device.id)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.ble.connect(device.id).subscribe( 
+      peripheral =&gt; </span><span class="s0">this</span><span class="s1">.onConnected(peripheral)</span><span class="s2">,</span><span class="s1"> 
+      error =&gt; { 
+        </span><span class="s0">let </span><span class="s1">alert = </span><span class="s0">this</span><span class="s1">.alertCtrl.create({ 
+          title: </span><span class="s3">'Error while Connecting'</span><span class="s2">,</span><span class="s1"> 
+          subTitle: error</span><span class="s2">,</span><span class="s1"> 
+          buttons: [</span><span class="s3">'Ok'</span><span class="s1">] 
+        })</span><span class="s2">;</span><span class="s1"> 
+        alert.present()</span><span class="s2">;</span><span class="s1"> 
+      } 
+    )</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Saves the connected device in device 
+   * </span><span class="s5">@param </span><span class="s4">peripheral connected device 
+   */</span><span class="s1"> 
+  onConnected(peripheral) { 
+    </span><span class="s0">this</span><span class="s1">.device = peripheral</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">this</span><span class="s1">.connected = </span><span class="s0">true</span><span class="s2">;</span><span class="s1"> 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Disconnects from the connected device and saves in device dummy values 
+   * </span><span class="s5">@param </span><span class="s4">device connected device 
+   */</span><span class="s1"> 
+  disconnect(device) { 
+    </span><span class="s0">this</span><span class="s1">.ble.disconnect(device.id).then(res =&gt; { 
+      </span><span class="s0">this</span><span class="s1">.connected = </span><span class="s0">false</span><span class="s2">;</span><span class="s1"> 
+      </span><span class="s0">this</span><span class="s1">.device = { 
+        </span><span class="s3">'name'</span><span class="s1">: </span><span class="s3">''</span><span class="s2">,</span><span class="s1"> 
+        </span><span class="s3">'id'</span><span class="s1">: </span><span class="s3">''</span><span class="s2">,</span><span class="s1"> 
+        </span><span class="s3">'advertising'</span><span class="s1">: [</span><span class="s6">2</span><span class="s2">, </span><span class="s6">1</span><span class="s2">, </span><span class="s6">6</span><span class="s2">, </span><span class="s6">3</span><span class="s2">, </span><span class="s6">3</span><span class="s2">, </span><span class="s6">15</span><span class="s2">, </span><span class="s6">24</span><span class="s2">, </span><span class="s6">8</span><span class="s2">, </span><span class="s6">9</span><span class="s2">, </span><span class="s6">66</span><span class="s2">, </span><span class="s6">97</span><span class="s2">, </span><span class="s6">116</span><span class="s2">, </span><span class="s6">116</span><span class="s2">, </span><span class="s6">101</span><span class="s2">, </span><span class="s6">114</span><span class="s2">, </span><span class="s6">121</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+        </span><span class="s3">'rssi'</span><span class="s1">: -</span><span class="s6">55</span><span class="s2">,</span><span class="s1"> 
+        </span><span class="s3">'services'</span><span class="s1">: []</span><span class="s2">,</span><span class="s1"> 
+        </span><span class="s3">'characteristics'</span><span class="s1">: [] 
+      }</span><span class="s2">;</span><span class="s1"> 
+    }).catch(err =&gt; { 
+ 
+    }) 
+  } 
+ 
+  </span><span class="s4">/** 
+   * Sends the image via ble to the connected device. The image is mirrored and only 80 pixels are send at once. 
+   */</span><span class="s1"> 
+  sendImage() { 
+    </span><span class="s0">let </span><span class="s1">imageData = </span><span class="s0">this</span><span class="s1">.context.getImageData(</span><span class="s6">0</span><span class="s2">, </span><span class="s6">0</span><span class="s2">, </span><span class="s6">400</span><span class="s2">, </span><span class="s6">300</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">let </span><span class="s1">data = imageData.data</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">let </span><span class="s1">start = </span><span class="s6">1600</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">let </span><span class="s1">end = </span><span class="s6">3</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">let </span><span class="s1">i = </span><span class="s6">0</span><span class="s2">;</span><span class="s1"> 
+    </span><span class="s0">for </span><span class="s1">(</span><span class="s0">let </span><span class="s1">row = </span><span class="s6">0</span><span class="s2">; </span><span class="s1">row &lt; </span><span class="s6">300</span><span class="s2">; </span><span class="s1">row++</span><span class="s2">, </span><span class="s1">start += </span><span class="s6">1600</span><span class="s2">, </span><span class="s1">end += </span><span class="s6">1600</span><span class="s1">) { 
+      i = start</span><span class="s2">;</span><span class="s1"> 
+      </span><span class="s0">for </span><span class="s1">(</span><span class="s0">let </span><span class="s1">blocks = </span><span class="s6">0</span><span class="s2">; </span><span class="s1">blocks &lt; </span><span class="s6">5</span><span class="s2">; </span><span class="s1">blocks++) { 
+        </span><span class="s0">let </span><span class="s1">sendingData = </span><span class="s3">&quot;&quot;</span><span class="s2">;</span><span class="s1"> 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">let </span><span class="s1">b = </span><span class="s6">0</span><span class="s2">; </span><span class="s1">b &lt; </span><span class="s6">20</span><span class="s2">; </span><span class="s1">b++) { 
+          </span><span class="s0">let </span><span class="s1">block = </span><span class="s0">new </span><span class="s1">Uint8Array(</span><span class="s6">4</span><span class="s1">)</span><span class="s2">;</span><span class="s1"> 
+          </span><span class="s0">for </span><span class="s1">(</span><span class="s0">let </span><span class="s1">pixel = </span><span class="s6">0</span><span class="s2">; </span><span class="s1">pixel &lt; </span><span class="s6">4</span><span class="s2">; </span><span class="s1">pixel++</span><span class="s2">, </span><span class="s1">i = i - </span><span class="s6">4</span><span class="s1">) { 
+            </span><span class="s0">let </span><span class="s1">gray = data[i]</span><span class="s2">;</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s1">(gray == </span><span class="s6">0</span><span class="s1">) { 
+              block[pixel] = </span><span class="s6">3</span><span class="s2">;</span><span class="s1"> 
+            } </span><span class="s0">else if </span><span class="s1">(gray == </span><span class="s6">128</span><span class="s1">) { 
+              block[pixel] = </span><span class="s6">2</span><span class="s2">;</span><span class="s1"> 
+            } </span><span class="s0">else if </span><span class="s1">(gray == </span><span class="s6">192</span><span class="s1">) { 
+              block[pixel] = </span><span class="s6">1</span><span class="s2">;</span><span class="s1"> 
+            } </span><span class="s0">else if </span><span class="s1">(gray == </span><span class="s6">255</span><span class="s1">) { 
+              block[pixel] = </span><span class="s6">0</span><span class="s2">;</span><span class="s1"> 
+            } </span><span class="s0">else </span><span class="s1">{ 
+              block[pixel] = </span><span class="s6">3</span><span class="s2">;</span><span class="s1"> 
+            } 
+          } 
+          </span><span class="s0">let </span><span class="s1">pixelBlock = (block[</span><span class="s6">0</span><span class="s1">] + (block[</span><span class="s6">1</span><span class="s1">] * </span><span class="s6">4</span><span class="s1">) + (block[</span><span class="s6">2</span><span class="s1">] * </span><span class="s6">16</span><span class="s1">) + (block[</span><span class="s6">3</span><span class="s1">] * </span><span class="s6">64</span><span class="s1">)).toString()</span><span class="s2">;</span><span class="s1"> 
+          </span><span class="s0">while </span><span class="s1">(pixelBlock.length &lt; </span><span class="s6">3</span><span class="s1">) { 
+            pixelBlock = </span><span class="s6">0 </span><span class="s1">+ </span><span class="s3">&quot;&quot; </span><span class="s1">+ pixelBlock</span><span class="s2">;</span><span class="s1"> 
+          } 
+          sendingData += pixelBlock</span><span class="s2">;</span><span class="s1"> 
+        } 
+        </span><span class="s0">this</span><span class="s1">.ble.write(</span><span class="s0">this</span><span class="s1">.device.id</span><span class="s2">, </span><span class="s0">this</span><span class="s1">.serviceUUID</span><span class="s2">, </span><span class="s0">this</span><span class="s1">.sendUUID</span><span class="s2">, </span><span class="s0">this</span><span class="s1">.stringToBytes(sendingData)).catch(err =&gt; { 
+          </span><span class="s0">let </span><span class="s1">alert = </span><span class="s0">this</span><span class="s1">.alertCtrl.create({ 
+            title: </span><span class="s3">'Error while sending image'</span><span class="s2">,</span><span class="s1"> 
+            subTitle: err</span><span class="s2">,</span><span class="s1"> 
+            buttons: [</span><span class="s3">'Ok'</span><span class="s1">] 
+          })</span><span class="s2">;</span><span class="s1"> 
+          alert.present()</span><span class="s2">;</span><span class="s1"> 
+        })</span><span class="s2">;</span><span class="s1"> 
+ 
+        </span><span class="s0">let </span><span class="s1">currentTime = </span><span class="s0">new </span><span class="s1">Date().getTime()</span><span class="s2">;</span><span class="s1"> 
+        </span><span class="s0">while </span><span class="s1">(currentTime + </span><span class="s6">500 </span><span class="s1">&gt;= </span><span class="s0">new </span><span class="s1">Date().getTime()) { 
+        } 
+      } 
+    } 
+  } 
+ 
+    </span><span class="s4">/** 
+     * Shows a loading screen and calls the send image function. 
+     */</span><span class="s1"> 
+    onUpload() 
+    { 
+      </span><span class="s0">const </span><span class="s1">loader = </span><span class="s0">this</span><span class="s1">.loading.create({ 
+        content: </span><span class="s3">&quot;Sending Data...&quot;</span><span class="s1"> 
+      })</span><span class="s2">;</span><span class="s1"> 
+      loader.present()</span><span class="s2">;</span><span class="s1"> 
+ 
+      </span><span class="s0">this</span><span class="s1">.sendImage()</span><span class="s2">;</span><span class="s1"> 
+ 
+      loader.dismiss()</span><span class="s2">;</span><span class="s1"> 
+    } 
+ 
+    </span><span class="s4">/** 
+     * Converts a string into a byte array. 
+     * </span><span class="s5">@param </span><span class="s4">string string that needs to be converted 
+     * </span><span class="s5">@returns </span><span class="s4">{ArrayBufferLike} 
+     */</span><span class="s1"> 
+    stringToBytes(string) 
+    { 
+      </span><span class="s0">let </span><span class="s1">array = </span><span class="s0">new </span><span class="s1">Uint8Array(string.length)</span><span class="s2">;</span><span class="s1"> 
+      </span><span class="s0">for </span><span class="s1">(</span><span class="s0">let </span><span class="s1">i = </span><span class="s6">0</span><span class="s2">, </span><span class="s1">l = string.length</span><span class="s2">; </span><span class="s1">i &lt; l</span><span class="s2">; </span><span class="s1">i++) { 
+        array[i] = string.charCodeAt(i)</span><span class="s2">;</span><span class="s1"> 
+      } 
+      </span><span class="s0">return </span><span class="s1">array.buffer</span><span class="s2">;</span><span class="s1"> 
+    } 
+ 
+ 
+  } 
+ 
+ 
+</span></pre>
+</body>
+</html>
