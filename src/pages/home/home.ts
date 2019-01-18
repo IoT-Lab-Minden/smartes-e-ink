@@ -248,27 +248,27 @@ export class HomePage {
             imageData.data[i] = 0;
             imageData.data[i+1] = 0;
             imageData.data[i+2] = 0;
-            block[k] = 0;
+            block[k] = 3;
           } else if (gray == 128) {
             imageData.data[i] = 128;
             imageData.data[i+1] = 128;
             imageData.data[i+2] = 128;
-            block[k] = 1;
+            block[k] = 2;
           } else if (gray == 192) {
             imageData.data[i] = 192;
             imageData.data[i+1] = 192;
             imageData.data[i+2] = 192;
-            block[k] = 2;
+            block[k] = 1;
           } else if(gray == 255){
             imageData.data[i] = 255;
             imageData.data[i+1] = 255;
             imageData.data[i+2] = 255;
-            block[k] = 3;
+            block[k] = 0;
           } else {
             imageData.data[i] = 0;
             imageData.data[i+1] = 0;
             imageData.data[i+2] = 0;
-            block[k] = 3  ;
+            block[k] = 3;
           }
         }
         let pixelBlock = (block[0] + (block[1] * 4) + (block[2] * 16) + (block[3] * 64)).toString();
@@ -292,7 +292,6 @@ export class HomePage {
       while (currentTime + 500 >= new Date().getTime()) {
       }
     }
-    //imageData.data = data;
     this.context.putImageData(imageData, 0, 0);
     console.log(t);
   }
