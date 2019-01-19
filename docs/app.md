@@ -28,6 +28,6 @@ Need help using the app? Check our [guide](app-guide.md)!
 
 ## Documentation
 
-[Here](app-code.md) you can find our source code.
+[Here](app-source.md) you can find our source code.
 
 ## 
