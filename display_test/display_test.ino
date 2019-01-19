@@ -61,6 +61,11 @@ int picture=0;
 const unsigned char *pictures[MAX_IMAGES];
 
 /**
+ * Picture to override
+ */
+unsigned int overwriteNr=0;
+
+/**
  * Displays an image on the display
  * @param image The image to be displayed
  */
@@ -159,7 +164,18 @@ class MyCallbacks: public BLECharacteristicCallbacks
       {
         if(pos<30000)
         {
-          gImage_image_1[pos]=c;
+          if(overwriteNr==0)
+          {
+            gImage_image_1[pos]=c;
+          }
+          else if(overwriteNr==1)
+          {
+            gImage_image_2[pos]=c;
+          }
+          else
+          {
+            gImage_image_3[pos]=c;
+          }
           //Serial.println(result.c_str());
           pos++;
          // Serial.println(pos);
@@ -175,6 +191,14 @@ class MyCallbacks: public BLECharacteristicCallbacks
            clearScreen();
            clearScreen();
            clearScreen();
+           if(overwriteNr==2)
+           {
+            overwriteNr=0;
+           }
+           else
+           {
+            overwriteNr++;
+           }
            sendImage(pictures[0]);
           }
         }
