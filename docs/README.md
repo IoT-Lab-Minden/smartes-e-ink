@@ -32,6 +32,14 @@ Check our [guide](app-guide.mdl)!
 
 [Documentation of App](app.md)
 
+## Features that are not included: 
+
+* If nobody is standing in front of the display the device will not go in sleep mode, because after awaking from sleep mode the device resets itself and the stored images are gone.
+
+## Future Updates / Changes:
+
+* It takes about 10 - 15 minutes to transmit an image from the smartphone to the display. In the future we will try to get this process faster.
+
 ## Team
 
 * Marc Schwettmann 
