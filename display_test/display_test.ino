@@ -125,6 +125,7 @@ class MyServerCallbacks: public BLEServerCallbacks
     {
       deviceConnected = true;
       detachInterrupt(GESTURE_INT);
+      Serial.println("Verbunden");
     };
 
     /**
@@ -134,6 +135,8 @@ class MyServerCallbacks: public BLEServerCallbacks
     {
       deviceConnected = false;
       attachInterrupt(GESTURE_INT, interruptRoutine, FALLING);
+      pos=0;
+      Serial.println("Getrennt");
     }
 };
 
@@ -191,6 +194,9 @@ class MyCallbacks: public BLECharacteristicCallbacks
            clearScreen();
            clearScreen();
            clearScreen();
+           
+           picture=overwriteNr;
+           sendImage(pictures[overwriteNr]);
            if(overwriteNr==2)
            {
             overwriteNr=0;
@@ -199,7 +205,7 @@ class MyCallbacks: public BLECharacteristicCallbacks
            {
             overwriteNr++;
            }
-           sendImage(pictures[0]);
+           pos=0;
           }
         }
       }
